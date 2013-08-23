@@ -1,4 +1,4 @@
-%	setdefault('__app_name__', 'CARAX')
+%	setdefault('__app_name__', 'carax')
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -11,6 +11,26 @@
 		<p><textarea name="query" rows="8" cols="40"></textarea></p>
 		<p><input type="submit" value="Continue &rarr;"></p>
 	</form>
+	<div id="db-info">
+		%if defined('db_info'):
+		<table border="1" cellspacing="5" cellpadding="5">
+			<tr>
+				<th> </th>
+				%for hd in db_desc:
+				<th>{{hd[0]}}</th>
+				%end
+			</tr>
+			%for i, infos in enumerate(db_info):
+			<tr>
+				<td><a href="/execute?query=pragma table_info({{infos[1]}})&db_path={{db_path}}">{{i+1}}</a></td>
+				%for col in infos:
+				<td>{{col}}</td>
+				%end
+			</tr>
+			%end
+		</table>
+		%end
+	</div>
 <p>
 	Query: {{get('query', 'No Query')}}
 </p>

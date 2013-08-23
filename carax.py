@@ -6,12 +6,37 @@ import os
 @view('index')
 def executequery():
 	db_path = request.forms.get('db_path')
+	data = {}
+	if db_path:
+		db = sqlite3.connect(db_path)
+		c = db.cursor()
+		data['db_path'] = db_path
+		data['db_info'] = c.execute('select type,name,tbl_name from sqlite_master').fetchall()
+		data['db_desc'] = c.description
+		query = request.forms.get('query')
+		if query:
+			data['query'] = query	
+			data['rows'] = c.execute(query).fetchall()
+			data["description"] = c.description
+	return data
+
+@route('/execute', method='GET')
+@view('index')
+def executequeryget():
+	db_path = request.query.get('db_path')
 	db = sqlite3.connect(db_path)
 	c = db.cursor()
-	query = request.forms.get('query')
-	result = c.execute(query).fetchall()
-	return dict(rows=result, query=query, db_path=db_path,
-		description=c.description)
+	query = request.query.get('query')
+	data = {}
+	if db_path:
+		data['db_path'] = db_path
+		data['db_info'] = c.execute('select type,name,tbl_name from sqlite_master').fetchall()
+		data['db_desc'] = c.description
+	if query:
+		data['query'] = query
+		data['rows'] = c.execute(query).fetchall()
+		data["description"] = c.description
+	return data
 
 @route('/')
 def index():
