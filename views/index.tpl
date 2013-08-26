@@ -178,6 +178,11 @@
 		return true;
 	};
 	
+	function executeForm(form) {
+		console.log(form.query);
+		alert(form.query);
+		return false;
+	}
 	</script>
 </head>
 <body id="body" onload="document.database.path.focus();">
@@ -197,10 +202,10 @@
 	<div id="main">
 		<h3>Query:</h3>
 		<hr/>
-		<form action="execute" method="post" accept-charset="utf-8"
-		name="queryForm">
+		<form action="#" method="get" accept-charset="utf-8"
+		name="queryForm" onsubmit="executeForm(this);">
 			<p><textarea name="query" rows="8" cols="40"></textarea></p>
-			<p><input type="submit" value="Send" onclick="return false;"></p>
+			<p><input type="submit" value="Send"></p>
 		</form>
 		<p>
 		Query: <span id="query"></span>
