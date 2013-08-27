@@ -74,7 +74,25 @@
 		}
 	};
 	
-	var app = new Object();
+	var app = function (db_path) {
+		return {
+			db_path: null,
+			execute: function execute(query, contentHandler) {
+				var setdbReq = new Ajax();
+				var ret;
+				var qs = "/execute?query={query}&db_path={db_path};".supplant({
+					'query': query,
+					'db_path': this.db_path
+				});
+				setdbReq.loadXMLDoc(qs, function(req) {
+					req = req.request;
+					if (req.readyState === 4 && req.status === 200) {
+						contentHandler(req)
+					}
+				});
+			}
+		};
+	};
 	
 	function setDatabase(input) {
 		var setdbReq = new Ajax();
