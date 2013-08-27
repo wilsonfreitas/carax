@@ -90,7 +90,7 @@
 				document.queryForm.query.focus();
 			}
 		});
-		return true;
+		return false;
 	};
 	
 	function createDBInfoTable(rows) {
@@ -114,7 +114,76 @@
 			}
 		}
 		document.getElementById("db_info_table").style.visibility = 'visible';
-		
+	};
+	
+	function getDBInfoLink(entity, entity_type, i) {
+		var link;
+		if (entity_type === 'table') {
+			link = '<a href="/execute?query=pragma table_info({entity})' +
+			'&db_path={db_path}" class="info">{i}</a>';
+		} else {
+			link = '<a href="/execute?query=pragma index_info({entity})' +
+			'&db_path={db_path}" class="info">{i}</a>';
+		}
+		return link.supplant({'entity': entity, 'db_path': app.db_path, 'i': i});
+	};
+	
+	String.prototype.supplant = function (o) {
+	    return this.replace(/{([^{}]*)}/g,
+	        function (a, b) {
+	            var r = o[b];
+	            return typeof r === 'string' || typeof r === 'number' ? r : a;
+	        }
+	    );
+	};
+	
+	function executeQuery(form) {
+		var setdbReq = new Ajax();
+		var ret;
+		var qs = "/execute?query={query}&db_path={db_path};".supplant({
+			'query': form.query.value,
+			'db_path': app.db_path
+		});
+		setdbReq.loadXMLDoc(qs, function(req) {
+			req = req.request;
+			if (req.readyState === 4 && req.status === 200) {
+				ret = eval('(' + req.responseText + ')');
+				clearTable();
+				createTable(ret.rows, ret.description);
+				document.queryForm.query.focus();
+			}
+		});
+		return false;
+	};
+	
+	function createTable(rows, description) {
+		var tr, td, row;
+		var i, j;
+		var table = document.getElementById("table-results");
+		var thead = document.createElement('thead');
+		table.appendChild(thead);
+		tr = thead.insertRow(0);
+		td = document.createElement('th');
+		td.innerHTML = 'N';
+		tr.appendChild(td);
+		for (i=0 ; i<description.length ; i++) {
+			td = document.createElement('th');
+			td.innerHTML = description[i][0].toUpperCase();
+			tr.appendChild(td);
+		}
+		var tbody = document.createElement('tbody');
+		table.appendChild(tbody);
+		for (i=0 ; i<rows.length ; i++) {
+			row = rows[i];
+			tr = tbody.insertRow(tbody.rows.length);
+			td = tr.insertCell(tr.cells.length);
+			td.innerHTML = i+1;
+			for (j=1 ; j<(row.length+1) ; j++) {
+				td = tr.insertCell(tr.cells.length);
+				td.innerHTML = row[j-1];
+			}
+		}
+		table.style.visibility = 'visible';
 	};
 	
 	function tableCreate() {
@@ -139,50 +208,19 @@
 		}
 		tbl.appendChild(tbdy);
 		body.appendChild(tbl)
-	}
+	};
 	
-	function getDBInfoLink(entity, entity_type, i) {
-		var link;
-		if (entity_type === 'table') {
-			link = '<a href="/execute?query=pragma table_info({entity})' +
-			'&db_path={db_path}" class="info">{i}</a>';
-		} else {
-			link = '<a href="/execute?query=pragma index_info({entity})' +
-			'&db_path={db_path}" class="info">{i}</a>';
+	function clearTable() {
+		var i;
+		var table = document.getElementById("table-results");
+		var rc = table.rows.length;
+		for (i=0 ; i<rc ; i++) {
+			table.deleteRow(i);
+			rc--;
+			i--;
 		}
-		return link.supplant({'entity': entity, 'db_path': app.db_path, 'i': i});
+		// document.getElementById("db_info_table").style.visibility = 'visible';
 	};
-	
-	String.prototype.supplant = function (o) {
-	    return this.replace(/{([^{}]*)}/g,
-	        function (a, b) {
-	            var r = o[b];
-	            return typeof r === 'string' || typeof r === 'number' ? r : a;
-	        }
-	    );
-	};
-	
-	function executeQuery(input) {
-		var setdbReq = new Ajax();
-		var ret;
-		setdbReq.loadXMLDoc("/execute?db_path=" + app.db_path + 
-		"&query=" + input.value, 
-		function(req) {
-			req = req.request;
-			if (req.readyState === 4 && req.status === 200) {
-				ret = eval('(' + req.responseText + ')');
-				createTable(ret.rows);
-				document.queryForm.query.focus();
-			}
-		});
-		return true;
-	};
-	
-	function executeForm(form) {
-		console.log(form.query);
-		alert(form.query);
-		return false;
-	}
 	</script>
 </head>
 <body id="body" onload="document.database.path.focus();">
@@ -203,33 +241,12 @@
 		<h3>Query:</h3>
 		<hr/>
 		<form action="#" method="get" accept-charset="utf-8"
-		name="queryForm" onsubmit="executeForm(this);">
+		name="queryForm" onsubmit="return executeQuery(this);">
 			<p><textarea name="query" rows="8" cols="40"></textarea></p>
 			<p><input type="submit" value="Send"></p>
 		</form>
-		<p>
-		Query: <span id="query"></span>
-		</p>
-		<p>
-		%if defined('rows'):
-		<table>
-			<tr>
-				<th> </th>
-				%for col in description:
-				<th>{{col[0]}}</th>
-				%end
-			</tr>
-			%for i, row in enumerate(rows):
-			<tr>
-				<td>{{i+1}}</td>
-				%for col in row:
-				<td>{{col}}</td>
-				%end
-			</tr>
-			%end
-		</table>
-		%end
-		</p>
+		<p>Query: <span id="query"></span></p>
+		<p><table id="table-results" style="visibility: hidden; width: 100%;"></table></p>
 	</div>
 	<div id="panel">
 		<h3 id="database_info">Database info</h3>
