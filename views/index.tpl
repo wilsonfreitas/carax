@@ -100,6 +100,13 @@
 			setdbReq.loadJSON(qs, function(ret) { contentHandler(ret) });
 			return false;
 		};
+		that.executeQuery = function (query) {
+			return app.execute(query, function(ret) {
+				clearTable();
+				createTable(ret.rows, ret.description);
+				document.queryForm.query.focus();
+			});
+		};
 		that.check = function (database) {
 			var setdbReq = new Ajax();
 			var qs = "/check?database={database};".supplant({ 'database': database });
@@ -155,14 +162,6 @@
 		return link.supplant({'entity': entity, 'db_path': app.db_path, 'i': i});
 	};
 	
-	function executeQuery(query) {
-		return app.execute(query, function(ret) {
-			clearTable();
-			createTable(ret.rows, ret.description);
-			document.queryForm.query.focus();
-		});
-	};
-	
 	function createTable(rows, description) {
 		var tr, td, row;
 		var i, j;
@@ -191,30 +190,6 @@
 			}
 		}
 		table.style.visibility = 'visible';
-	};
-	
-	function tableCreate() {
-		var body = document.getElementsByTagName('body')[0];
-		var tbl = document.createElement('table');
-		tbl.style.width = '100%';
-		tbl.setAttribute('border','1');
-		var tbdy = document.createElement('tbody');
-		for (var i=0 ; i<3 ; i++) {
-			var tr = document.createElement('tr');
-			for (var j=0 ; j<2 ; j++) {
-				if (i==2 && j==1) {
-					break;
-				} else {
-					var td = document.createElement('td');
-					td.appendChild(document.createTextNode('\u0020'));
-					i==1 && j==1 ? td.setAttribute('rowSpan','2') : null;
-					tr.appendChild(td)
-				}
-			}
-			tbdy.appendChild(tr);
-		}
-		tbl.appendChild(tbdy);
-		body.appendChild(tbl)
 	};
 	
 	function clearTable() {
@@ -248,7 +223,7 @@
 		<h3>Query:</h3>
 		<hr/>
 		<form action="#" method="get" accept-charset="utf-8"
-		name="queryForm" onsubmit="return executeQuery(this.query.value);">
+		name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
 			<p><textarea name="query" rows="8" cols="40"></textarea></p>
 			<p><input type="submit" value="Send"></p>
 		</form>
