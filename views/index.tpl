@@ -1,4 +1,4 @@
-%	setdefault('__app_name__', 'carax')
+%	setdefault('__app_name__', 'sequela')
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -51,6 +51,15 @@
 	th {border: 1px groove black; padding: 7px; background-color: #FFFFCC;}
 	</style>
 	<script type="text/javascript" charset="utf-8">
+	String.prototype.supplant = function (o) {
+	    return this.replace(/{([^{}]*)}/g,
+	        function (a, b) {
+	            var r = o[b];
+	            return typeof r === 'string' || typeof r === 'number' ? r : a;
+	        }
+	    );
+	};
+	
 	function Ajax() {
 		var me = this;
 		var req = null;
@@ -64,52 +73,52 @@
 			alert('This application requires a browser with XML support.');
 		}
 		this.request = req;
-		this.loadXMLDoc = function (url, loadHandler) {
+		this.loadJSON = function (url, loadHandler) {
 			if (this.request) {
 				this.request.open('GET', url, true);
-				this.request.onreadystatechange = function() {loadHandler(me)};
+				this.request.onreadystatechange = function() {
+					req = me.request;
+					if (req.readyState === 4 && req.status === 200) {
+						loadHandler(eval('(' + req.responseText + ')'))
+					}
+				};
 				this.request.setRequestHeader("Content-Type", "text/xml");
 				this.request.send("");
-			}
-		}
-	};
-	
-	var app = function (db_path) {
-		return {
-			db_path: null,
-			execute: function execute(query, contentHandler) {
-				var setdbReq = new Ajax();
-				var ret;
-				var qs = "/execute?query={query}&db_path={db_path};".supplant({
-					'query': query,
-					'db_path': this.db_path
-				});
-				setdbReq.loadXMLDoc(qs, function(req) {
-					req = req.request;
-					if (req.readyState === 4 && req.status === 200) {
-						contentHandler(req)
-					}
-				});
 			}
 		};
 	};
 	
-	function setDatabase(input) {
-		var setdbReq = new Ajax();
-		var ret;
-		setdbReq.loadXMLDoc("/execute?db_path=" + input.value + 
-		"&query=select type,name,tbl_name from sqlite_master", 
-		function(req) {
-			req = req.request;
-			if (req.readyState === 4 && req.status === 200) {
-				ret = eval('(' + req.responseText + ')');
-				app.db_path = input.value;
-				createDBInfoTable(ret.rows);
-				document.queryForm.query.focus();
-			}
-		});
-		return false;
+	var Sequela = function () {
+		var that = {};
+		that.database = null;
+		that.execute = function (query, contentHandler) {
+			var setdbReq = new Ajax();
+			var qs = "/execute?query={query}&database={database};".supplant({
+				'query': query,
+				'database': that.database
+			});
+			setdbReq.loadJSON(qs, function(ret) { contentHandler(ret) });
+			return false;
+		};
+		that.check = function (database) {
+			var setdbReq = new Ajax();
+			var qs = "/check?database={database};".supplant({ 'database': database });
+			setdbReq.loadJSON(qs, function(r) {
+				if (r) {
+					that.database = database;
+					var q = 'select type,name,tbl_name from sqlite_master';
+					that.execute(q, function (ret) {
+						createDBInfoTable(ret.rows);
+						document.queryForm.query.focus();
+					});
+				}
+			});
+			return false;
+		};
+		return that;
 	};
+	
+	var app = new Sequela();
 	
 	function createDBInfoTable(rows) {
 		var tr, td, row;
@@ -146,32 +155,12 @@
 		return link.supplant({'entity': entity, 'db_path': app.db_path, 'i': i});
 	};
 	
-	String.prototype.supplant = function (o) {
-	    return this.replace(/{([^{}]*)}/g,
-	        function (a, b) {
-	            var r = o[b];
-	            return typeof r === 'string' || typeof r === 'number' ? r : a;
-	        }
-	    );
-	};
-	
-	function executeQuery(form) {
-		var setdbReq = new Ajax();
-		var ret;
-		var qs = "/execute?query={query}&db_path={db_path};".supplant({
-			'query': form.query.value,
-			'db_path': app.db_path
+	function executeQuery(query) {
+		return app.execute(query, function(ret) {
+			clearTable();
+			createTable(ret.rows, ret.description);
+			document.queryForm.query.focus();
 		});
-		setdbReq.loadXMLDoc(qs, function(req) {
-			req = req.request;
-			if (req.readyState === 4 && req.status === 200) {
-				ret = eval('(' + req.responseText + ')');
-				clearTable();
-				createTable(ret.rows, ret.description);
-				document.queryForm.query.focus();
-			}
-		});
-		return false;
 	};
 	
 	function createTable(rows, description) {
@@ -241,16 +230,16 @@
 	};
 	</script>
 </head>
-<body id="body" onload="document.database.path.focus();">
+<body id="body" onload="document.database.database.focus();">
 	<h1 id="gina">
 		<a href="/">{{__app_name__}}—Your best friend, SQLite user!</a></h1>
 	<div id="database">
 		<form action="#" method="get" accept-charset="utf-8"
 		name="database" onsubmit="return false;">
 			<p>Database file path:
-				<input type="text" name="path" value=""
-				id="db_path" size=100 onchange="setDatabase(this);">
-				<input type="submit" value="Set database"
+				<input type="text" name="database" value=""
+				id="db_path" size=100 onchange="app.check(this.value);">
+				<input type="submit" value="Check database"
 				onclick="return false;">
 			</p>
 		</form>
@@ -259,7 +248,7 @@
 		<h3>Query:</h3>
 		<hr/>
 		<form action="#" method="get" accept-charset="utf-8"
-		name="queryForm" onsubmit="return executeQuery(this);">
+		name="queryForm" onsubmit="return executeQuery(this.query.value);">
 			<p><textarea name="query" rows="8" cols="40"></textarea></p>
 			<p><input type="submit" value="Send"></p>
 		</form>

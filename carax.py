@@ -5,14 +5,17 @@ import json
 
 @route('/execute')
 def execute():
-	db_path = request.query.get('db_path')
-	db = sqlite3.connect(db_path)
+	db = sqlite3.connect(request.query.get('database'))
 	c = db.cursor()
 	data = {}
 	data['query'] = request.query.get('query')
 	data['rows'] = c.execute(data['query']).fetchall()
 	data["description"] = c.description
 	return json.dumps(data)
+
+@route('/check')
+def check():
+	return str(os.path.exists(request.query.get('database'))).lower()
 
 @route('/')
 def index():
