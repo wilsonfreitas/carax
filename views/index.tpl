@@ -5,9 +5,7 @@
 	<title>{{__app_name__}}—Your best friend, SQLite user!</title>
 	<style type="text/css" media="screen">
 	body {
-		max-width: 80%;
-		margin-left: auto;
-		margin-right: auto;
+		width: 100%;
 		font-family: sans-serif;
 		font-size: 80%;
 	}
@@ -26,11 +24,13 @@
 	}
 	#database {
 		float: left;
-		width: 100%;
-		margin-bottom: 5px;
+		border: 1px solid black;
+		width: 20%;
 	}
+	#database #path { }
 	#main {
 		float: left;
+		border: 1px solid black;
 	}
 	#panel {
 		float: left;
@@ -206,33 +206,21 @@
 	</script>
 </head>
 <body id="body" onload="document.database.database.focus();">
-	<h1 id="gina">
-		<a href="/">{{__app_name__}}—Your best friend, SQLite user!</a></h1>
+	<h1><a href="/">{{__app_name__}}—Your best friend, SQLite user!</a></h1>
+
+	<!-- database PANE -->
+
 	<div id="database">
 		<form action="#" method="get" accept-charset="utf-8"
 		name="database" onsubmit="return false;">
-			<p>Database file path:
+			<p>Database:
 				<input type="text" name="database" value=""
-				id="db_path" size=100 onchange="app.check(this.value);">
-				<input type="submit" value="Check database"
+				id="path" onchange="app.check(this.value);">
+				<input type="submit" value="Check"
 				onclick="return false;">
 			</p>
 		</form>
-	</div>
-	<div id="main">
-		<h3>Query:</h3>
-		<hr/>
-		<form action="#" method="get" accept-charset="utf-8"
-		name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
-			<p><textarea name="query" rows="8" cols="40"></textarea></p>
-			<p><input type="submit" value="Send"></p>
-		</form>
-		<p>Query: <span id="query"></span></p>
-		<p><table id="table-results" style="visibility: hidden; width: 100%;"></table></p>
-	</div>
-	<div id="panel">
 		<h3 id="database_info">Database info</h3>
-		<hr/>
 		<table style="visibility: hidden" id="db_info_table">
 			<thead>
 				<tr>
@@ -244,6 +232,19 @@
 			</thead>
 			<tbody id="db_info"></tbody>
 		</table>
+	</div>
+	
+	<!-- main PANE -->
+	
+	<div id="main">
+		<h3>Query</h3>
+		<form action="#" method="get" accept-charset="utf-8"
+		name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
+			<p><textarea name="query" rows="8" cols="40"></textarea></p>
+			<p><input type="submit" value="Send"></p>
+		</form>
+		<p>Query: <span id="query"></span></p>
+		<p><table id="table-results" style="visibility: hidden; width: 100%;"></table></p>
 	</div>
 </body>
 </html>
