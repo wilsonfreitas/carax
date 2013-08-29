@@ -1,55 +1,106 @@
 %	setdefault('__app_name__', 'sequela')
+%	setdefault('__app_desc__', 'minimalistic SQLite frontend')
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-	<title>{{__app_name__}}—Your best friend, SQLite user!</title>
-	<style type="text/css" media="screen">
-	body {
-		width: 100%;
-		font-family: sans-serif;
-		font-size: 80%;
-	}
-	a {
-		color: black;
-		text-decoration: none;
-	}
-	a:hover {
-		color: red;
-		text-decoration: underline;
-	}
-	div {
-		margin-right: 10px;
-		padding: 5px;
-		/*border: 1px solid black;*/
-	}
-	#database {
-		float: left;
-		border: 1px solid black;
-		width: 20%;
-	}
-	#database #path { }
-	#main {
-		float: left;
-		border: 1px solid black;
-	}
-	#panel {
-		float: left;
-		width: 50%;
-	}
-	textarea {
-		width: 500px;
-		height: 100px;
-		min-height: 100px;
-	}
-	table {
-		table-collapse: collapse;
-		border-spacing: 0;
-		width: 100%;
-		font-size: 90%;
-	}
-	td {border: 1px groove black; padding: 7px; background-color: #CCFFCC;}
-	th {border: 1px groove black; padding: 7px; background-color: #FFFFCC;}
+	<title>{{__app_name__}}—{{__app_desc__}}</title>
+	<style type="text/css" media="screen">	
+	body { font-family: sans-serif; font-size: 90%; }
+	a {	color: black; text-decoration: none; }
+	a:hover { color: red; text-decoration: underline; }
+	hr { border: 0px solid black;}
+	textarea { width: 100%; height: 65%; font-size: 120%;}
+	h3 {font-size: 90%;}
+	table { table-collapse: collapse; border-spacing: 0; font-size: 80%; }
+	td {border: 0px solid black; padding: 3px; background-color: #CCCCAA;}
+	th {border: 0px solid black; padding: 3px; background-color: #FFFFCC;}
+/*	.database-results { font-size: 70%;}*/
+	.float-divider { clear:both; display:block;
+	  height:1px; font-size:1px; line-height:1px; }
+	.oi1 { background-color:white; margin:0; padding:2px; }
+	.oi2 { background-color:lightgrey; margin:5px; padding:5px; }
+	.oi3 { background-color:yellow; margin:5px; padding:5px; }
+	#main { width: 100%; }
+	
+	#nav { float:left; width:30%; min-width:75px; }
+	#content { float:left; width:70%; min-width:150px; }
+	#nav .oi2 { border: 1px solid black; height: 200px;}
+	#content .oi2 { border: 1px solid black; overflow: auto; height: 200px;}
+
+	#nav2 { float:left; width:40%; height: 300px; }
+	#content2 { float:left; width:60%; height: 300px;}
+	#nav2 .oi2 { border: 1px solid black; overflow: auto; height: 100%;}
+	#content2 .oi2 { border: 1px solid black; overflow: auto; height: 100%;}
+
+	#path { width: 100%;}
+	#header { background-color:lightgrey; margin:7px; padding:5px; border: 1px solid black;}
+	#title  { float:left;  min-width:280px; max-width:500px; margin-left:0; }
+	#search { float:right; min-width:280px; max-width:300px; margin-right:0; }
 	</style>
+</head>
+<body id="body" onload="document.database.database.focus();">
+	<div id="header">
+		<h1 id="title"><a href="/">{{__app_name__}}</a>
+			<br><span style="font-size: 60%;">{{__app_desc__}}</span></h1>
+	  <div id="search"> <h3>Database:</h3>
+			<form action="#" method="get" accept-charset="utf-8"
+			name="database" onsubmit="return app.check(this.path.value);">
+				<p><input type="text" name="database" value=""
+					id="path">
+					<input type="submit" value="Check database">
+				</p>
+			</form>
+	    <p class="message">Put the database's file path into the input
+				box above and press <strong>Check database</strong> to get the
+				database loaded.</p>
+	  </div>
+	  <div class="float-divider"></div>
+	</div>
+
+	<!--  -->
+
+	<div id="main">
+		<div class="oi1">
+		  <div id="nav"><div class="oi2">
+				<h3 id="database_info">Database info</h3>
+				<p style="overflow: auto; height: 155px; border: 1px solid black;">
+					<table style="visibility: hidden"
+				id="db_info_table" class="database-results">
+					<thead>
+						<tr>
+							<th>N</th>
+							<th>TYPE</th>
+							<th>NAME</th>
+							<th>TBL_NAME</th>
+						</tr>
+					</thead>
+					<tbody id="db_info"></tbody>
+				</table></p>
+			</div></div>
+
+		  <div id="content"><div class="oi2">
+		    <span class="float-divider"></span></div></div>
+		  <div class="float-divider"></div>
+		</div>
+	</div>
+
+	<hr/>
+
+	<div id="main"><div class="oi1">
+	  <div id="nav2"><div class="oi2"> <h3>Execute query</h3>
+			<form action="#" method="get" accept-charset="utf-8"
+			name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
+				<p><textarea name="query" rows="8" cols="40"></textarea></p>
+				<p><input type="submit" value="Send"></p>
+			</form>
+		</div></div>
+	  <div id="content2"><div class="oi2"> <h3>Query results</h3>
+			<p><table id="table-results" class="database-results" style="visibility: hidden;"></table></p>
+	    <span class="float-divider"></span></div></div>
+	  <div class="float-divider"></div></div>
+	</div>
+
+	<!-- END of the page -->
 	<script type="text/javascript" charset="utf-8">
 	String.prototype.supplant = function (o) {
 	    return this.replace(/{([^{}]*)}/g,
@@ -101,6 +152,7 @@
 			return false;
 		};
 		that.executeQuery = function (query) {
+			query = query.replace(/\n/g, ' ');
 			return app.execute(query, function(ret) {
 				clearTable();
 				createTable(ret.rows, ret.description);
@@ -204,47 +256,5 @@
 		// document.getElementById("db_info_table").style.visibility = 'visible';
 	};
 	</script>
-</head>
-<body id="body" onload="document.database.database.focus();">
-	<h1><a href="/">{{__app_name__}}—Your best friend, SQLite user!</a></h1>
-
-	<!-- database PANE -->
-
-	<div id="database">
-		<form action="#" method="get" accept-charset="utf-8"
-		name="database" onsubmit="return false;">
-			<p>Database:
-				<input type="text" name="database" value=""
-				id="path" onchange="app.check(this.value);">
-				<input type="submit" value="Check"
-				onclick="return false;">
-			</p>
-		</form>
-		<h3 id="database_info">Database info</h3>
-		<table style="visibility: hidden" id="db_info_table">
-			<thead>
-				<tr>
-					<th>N</th>
-					<th>TYPE</th>
-					<th>NAME</th>
-					<th>TBL_NAME</th>
-				</tr>
-			</thead>
-			<tbody id="db_info"></tbody>
-		</table>
-	</div>
-	
-	<!-- main PANE -->
-	
-	<div id="main">
-		<h3>Query</h3>
-		<form action="#" method="get" accept-charset="utf-8"
-		name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
-			<p><textarea name="query" rows="8" cols="40"></textarea></p>
-			<p><input type="submit" value="Send"></p>
-		</form>
-		<p>Query: <span id="query"></span></p>
-		<p><table id="table-results" style="visibility: hidden; width: 100%;"></table></p>
-	</div>
 </body>
 </html>
