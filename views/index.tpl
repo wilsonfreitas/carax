@@ -63,7 +63,7 @@
 		<div class="oi1">
 		  <div id="nav"><div class="oi2">
 				<h3 id="database_info">Database info</h3>
-				<p style="overflow: auto; height: 155px; border: 1px solid black;">
+				<p style="overflow-y: scroll; height: 155px; border: 1px solid black;">
 					<table style="visibility: hidden"
 				id="db_info_table" class="database-results">
 					<thead>
