@@ -59,9 +59,9 @@
 		<div class="oi1">
 		  <div id="nav"><div class="oi2">
 				<h3 id="database_info">Database info</h3>
-				<p style="overflow-y: scroll; height: 155px; border: 1px solid black;">
+				<p style="overflow-x: auto; overflow-y: scroll; height: 155px; border: 1px solid black;">
 					<table style="visibility: hidden"
-				id="db_info_table" class="database-results">
+				id="db_info_table" class="database-results">   <!-- database-info --> 
 					<thead>
 						<tr>
 							<th>N</th>
@@ -85,7 +85,7 @@
 	<div id="main"><div class="oi1">
 	  <div id="nav2"><div class="oi2"> <h3>Execute query</h3>
 			<form action="#" method="get" accept-charset="utf-8"
-			name="queryForm" onsubmit="return app.executeQuery(this.query.value);">
+			name="queryForm" onsubmit="return app.executeQuery(this.query.value, 'table-results');">
 				<p><textarea name="query" rows="8" cols="40"></textarea></p>
 				<p><input type="submit" value="Send"></p>
 			</form>
@@ -147,11 +147,11 @@
 			setdbReq.loadJSON(qs, function(ret) { contentHandler(ret) });
 			return false;
 		};
-		that.executeQuery = function (query) {
+		that.executeQuery = function (query, id) {
 			query = query.replace(/\n/g, ' ');
 			return app.execute(query, function(ret) {
-				clearTable();
-				createTable(ret.rows, ret.description);
+				clearTable(id);
+				createTable(ret.rows, ret.description, id);
 				document.queryForm.query.focus();
 			});
 		};
@@ -210,10 +210,10 @@
 		return link.supplant({'entity': entity, 'db_path': app.db_path, 'i': i});
 	};
 	
-	function createTable(rows, description) {
+	function createTable(rows, description, id) {
 		var tr, td, row;
 		var i, j;
-		var table = document.getElementById("table-results");
+		var table = document.getElementById(id);
 		var thead = document.createElement('thead');
 		table.appendChild(thead);
 		tr = thead.insertRow(0);
@@ -240,9 +240,9 @@
 		table.style.visibility = 'visible';
 	};
 	
-	function clearTable() {
+	function clearTable(id) {
 		var i;
-		var table = document.getElementById("table-results");
+		var table = document.getElementById(id);
 		var rc = table.rows.length;
 		for (i=0 ; i<rc ; i++) {
 			table.deleteRow(i);
