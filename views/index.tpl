@@ -61,8 +61,8 @@
 				<h3 id="database_info">Database info</h3>
 				<p style="overflow-x: auto; overflow-y: scroll; height: 155px; border: 1px solid black;">
 					<table style="visibility: hidden"
-				id="db_info_table" class="database-results">   <!-- database-info --> 
-					<thead>
+				id="database-info" class="database-results">
+					<!-- <thead>
 						<tr>
 							<th>N</th>
 							<th>TYPE</th>
@@ -70,7 +70,7 @@
 							<th>TBL_NAME</th>
 						</tr>
 					</thead>
-					<tbody id="db_info"></tbody>
+					<tbody id="db_info"></tbody> -->
 				</table></p>
 			</div></div>
 
@@ -161,9 +161,11 @@
 			setdbReq.loadJSON(qs, function(r) {
 				if (r) {
 					that.database = database;
-					var q = 'select type,name,tbl_name from sqlite_master';
+					var q = 'select type,name,tbl_name,sql from sqlite_master';
 					that.execute(q, function (ret) {
-						createDBInfoTable(ret.rows);
+						// createDBInfoTable(ret.rows);
+						clearTable('database-info');
+						createTable(ret.rows, ret.description, 'database-info');
 						document.queryForm.query.focus();
 					});
 				}
