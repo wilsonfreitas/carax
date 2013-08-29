@@ -45,8 +45,7 @@
 	  <div id="search"> <h3>Database:</h3>
 			<form action="#" method="get" accept-charset="utf-8"
 			name="database" onsubmit="return app.check(this.path.value);">
-				<p><input type="text" name="database" value=""
-					id="path">
+				<p><input type="text" name="database" value="" id="path">
 					<input type="submit" value="Check database">
 				</p>
 			</form>
