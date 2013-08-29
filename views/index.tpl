@@ -50,9 +50,6 @@
 					<input type="submit" value="Check database">
 				</p>
 			</form>
-	    <p class="message">Put the database's file path into the input
-				box above and press <strong>Check database</strong> to get the
-				database loaded.</p>
 	  </div>
 	  <div class="float-divider"></div>
 	</div>
