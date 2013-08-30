@@ -53,8 +53,6 @@
 	  <div class="float-divider"></div>
 	</div>
 
-	<!--  -->
-
 	<div id="main">
 		<div class="oi1">
 		  <div id="nav"><div class="oi2">
@@ -62,15 +60,6 @@
 				<p style="overflow-x: auto; overflow-y: scroll; height: 155px; border: 1px solid black;">
 					<table style="visibility: hidden"
 				id="database-info" class="database-results">
-					<!-- <thead>
-						<tr>
-							<th>N</th>
-							<th>TYPE</th>
-							<th>NAME</th>
-							<th>TBL_NAME</th>
-						</tr>
-					</thead>
-					<tbody id="db_info"></tbody> -->
 				</table></p>
 			</div></div>
 
