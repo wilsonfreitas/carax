@@ -1,5 +1,5 @@
 %	setdefault('__app_name__', 'sequela')
-%	setdefault('__app_desc__', 'minimalistic SQLite frontend')
+%	setdefault('__app_desc__', 'a minimalistic SQLite frontend')
 <html>
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -9,6 +9,7 @@
 	a {	color: black; text-decoration: none; }
 	a:hover { color: red; text-decoration: underline; }
 	hr { border: 0px solid black;}
+	p { padding: 0; margin: 0; border: 0; }
 	textarea { width: 100%; height: 65%; font-size: 120%;}
 	h3 {font-size: 90%;}
 	table { table-collapse: collapse; border-spacing: 0; font-size: 80%; }
@@ -35,19 +36,19 @@
 	#path { width: 100%;}
 	#header { background-color:lightgrey; margin:7px; padding:5px; border: 1px solid black;}
 	#title  { float:left;  min-width:280px; max-width:500px; margin-left:0; }
-	#search { float:right; min-width:280px; max-width:300px; margin-right:0; }
+	#search { float:right; min-width:280px; width:50%; margin-right:0; }
 	</style>
 </head>
 <body id="body" onload="document.database.database.focus();">
 	<div id="header">
-		<h1 id="title"><a href="/">{{__app_name__}}</a>
+		<h1 id="title" style="margin: 0; padding: 0;"><a href="/">{{__app_name__}}</a>
 			<br><span style="font-size: 60%;">{{__app_desc__}}</span></h1>
-	  <div id="search"> <h3>Database:</h3>
+		<!--  -->
+		<div id="search"> <h3 style="margin: 0; padding: 0;">Database:</h3>
 			<form action="#" method="get" accept-charset="utf-8"
 			name="database" onsubmit="return app.check(this.path.value);">
-				<p><input type="text" name="database" value="" id="path">
+				<input type="text" name="database" value="" id="path">
 					<input type="submit" value="Check database">
-				</p>
 			</form>
 	  </div>
 	  <div class="float-divider"></div>
