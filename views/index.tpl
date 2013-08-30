@@ -12,29 +12,29 @@
 	p { padding: 0; margin: 0; border: 0; }
 	textarea { width: 100%; height: 65%; font-size: 120%;}
 	h3 {font-size: 90%;}
-	table { table-collapse: collapse; border-spacing: 0; font-size: 80%; }
-	td {border: 0px solid black; padding: 3px; background-color: #CCCCAA;}
-	th {border: 0px solid black; padding: 3px; background-color: #FFFFCC;}
-/*	.database-results { font-size: 70%;}*/
+	table { table-collapse: collapse; border-spacing: 1px; font-size: 80%; background: black; margin: 2px;}
+	td {border: 0px solid black; padding: 3px; background-color: white;}
+	th {border: 0px solid black; padding: 3px; background-color: grey; color: white;}
+	/*	.database-results { font-size: 70%;}*/
+	.first-col-head, .first-col-body { text-align: center; background: grey; color: white;}
 	.float-divider { clear:both; display:block;
 	  height:1px; font-size:1px; line-height:1px; }
-	.oi1 { background-color:white; margin:0; padding:2px; }
-	.oi2 { background-color:lightgrey; margin:5px; padding:5px; }
-	.oi3 { background-color:yellow; margin:5px; padding:5px; }
+	.oi1 { margin:0; padding:2px; }
+	.oi2 { margin:5px; padding:5px; }
 	#main { width: 100%; }
 	
 	#nav { float:left; width:30%; min-width:75px; }
 	#content { float:left; width:70%; min-width:150px; }
-	#nav .oi2 { border: 1px solid black; height: 200px;}
-	#content .oi2 { border: 1px solid black; overflow: auto; height: 200px;}
+	#nav .oi2 { height: 200px;}
+	#content .oi2 { overflow: auto; height: 200px;}
 
 	#nav2 { float:left; width:40%; height: 300px; }
 	#content2 { float:left; width:60%; height: 300px;}
-	#nav2 .oi2 { border: 1px solid black; overflow: auto; height: 100%;}
-	#content2 .oi2 { border: 1px solid black; overflow: auto; height: 100%;}
+	#nav2 .oi2 { overflow: auto; height: 100%;}
+	#content2 .oi2 { overflow: auto; height: 100%;}
 
 	#path { width: 100%;}
-	#header { background-color:lightgrey; margin:7px; padding:5px; border: 1px solid black;}
+	#header { margin:7px; padding:5px;}
 	#title  { float:left;  min-width:280px; max-width:500px; margin-left:0; }
 	#search { float:right; min-width:280px; width:50%; margin-right:0; }
 	</style>
@@ -58,7 +58,7 @@
 		<div class="oi1">
 		  <div id="nav"><div class="oi2">
 				<h3 id="database_info">Database info</h3>
-				<p style="overflow-x: auto; overflow-y: scroll; height: 155px; border: 1px solid black;">
+				<p style="overflow: auto; height: 155px;">
 					<table style="visibility: hidden"
 				id="database-info" class="database-results">
 				</table></p>
@@ -211,6 +211,7 @@
 		tr = thead.insertRow(0);
 		td = document.createElement('th');
 		td.innerHTML = 'N';
+		td.className = 'first-col-head';
 		tr.appendChild(td);
 		for (i=0 ; i<description.length ; i++) {
 			td = document.createElement('th');
@@ -224,6 +225,7 @@
 			tr = tbody.insertRow(tbody.rows.length);
 			td = tr.insertCell(tr.cells.length);
 			td.innerHTML = i+1;
+			td.className = 'first-col-body';
 			for (j=1 ; j<(row.length+1) ; j++) {
 				td = tr.insertCell(tr.cells.length);
 				td.innerHTML = row[j-1];
