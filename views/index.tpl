@@ -133,13 +133,14 @@
 	var Sequela = function () {
 		var that = {};
 		that.database = null;
-		that.execute = function (query, contentHandler) {
+		that.execute = function (query, contentHandler, async) {
+			async = async || true;
 			var setdbReq = new Ajax();
 			var qs = "/execute?query={query}&database={database};".supplant({
 				'query': query,
 				'database': that.database
 			});
-			setdbReq.loadJSON(qs, function(ret) { contentHandler(ret) });
+			setdbReq.loadJSON(qs, function(ret) { contentHandler(ret) }, async);
 			return false;
 		};
 		that.executeQuery = function (query, id) {
@@ -174,10 +175,14 @@
 		var that = {
 			type: info[0],
 			name: info[1],
-			sql: info[2]
+			sql: info[2],
+			count: 0
 		};
-		that.getKey = function() {
-			return "{type}:{name}".supplant(that);
+		if (that.type === 'table') {
+			var query = 'select count(*) as count from {name}'.supplant(that);
+			app.execute(query, function(ret) {
+				that.count = ret.rows[0][0];
+			}, false);
 		}
 		return that;
 	}
@@ -207,7 +212,7 @@
 	function showTableInfo(name) {
 		var ti = tableInfos[name];
 		var p = document.getElementById("table-info");
-		p.innerHTML = "Name: {name}<br>Type: {type}<br>SQL: {sql}".supplant(ti);
+		p.innerHTML = "Name: {name}<br>Type: {type}<br>SQL: {sql}<br>Count: {count}".supplant(ti);
 		return false;
 	};
 	
