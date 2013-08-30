@@ -27,14 +27,16 @@
 	#main { width: 100%; }
 	
 	#nav { float:left; width:30%; min-width:75px; }
-	#content { float:left; width:70%; min-width:150px; }
-	#nav .oi2 { height: 200px;}
-	#content .oi2 { overflow: auto; height: 200px;}
+	#content { float:left; width:35%; min-width:150px; }
+	#pragma { float:left; width:35%; min-width:150px; }
+	#nav .oi2 { height: 200px; background: red;}
+	#content .oi2 { overflow: auto; height: 200px; background: blue;}
+	#pragma .oi2 { overflow: auto; height: 200px; background: green;}
 
 	#nav2 { float:left; width:40%; height: 300px; }
 	#content2 { float:left; width:60%; height: 300px;}
-	#nav2 .oi2 { overflow: auto; height: 100%;}
-	#content2 .oi2 { overflow: auto; height: 100%;}
+	#nav2 .oi2 { overflow: auto; height: 100%; background: yellow;}
+	#content2 .oi2 { overflow: auto; height: 100%; background: magenta;}
 
 	#path { width: 100%;}
 	#header { margin:7px; padding:5px;}
@@ -69,6 +71,12 @@
 
 		  <div id="content"><div class="oi2">
 				<p id="table-info"></p>
+		    <span class="float-divider"></span></div></div>
+
+		  <div id="pragma"><div class="oi2">
+				<p><table style="visibility: hidden"
+				id="table-info-pragma" class="database-results">
+				</table></p>
 		    <span class="float-divider"></span></div></div>
 		  <div class="float-divider"></div>
 		</div>
@@ -176,14 +184,20 @@
 			type: info[0],
 			name: info[1],
 			sql: info[2],
-			count: 0
+			count: 0,
+			info: null
 		};
+		var query;
 		if (that.type === 'table') {
-			var query = 'select count(*) as count from {name}'.supplant(that);
+			query = 'select count(*) as count from {name}'.supplant(that);
 			app.execute(query, function(ret) {
 				that.count = ret.rows[0][0];
 			}, false);
 		}
+		query = 'pragma {type}_info({name})'.supplant(that);
+		app.execute(query, function(ret) {
+			that.info = ret;
+		}, false);
 		return that;
 	}
 	
@@ -213,6 +227,8 @@
 		var ti = tableInfos[name];
 		var p = document.getElementById("table-info");
 		p.innerHTML = "Name: {name}<br>Type: {type}<br>SQL: {sql}<br>Count: {count}".supplant(ti);
+		clearTable('table-info-pragma');
+		createTable(ti.info.rows, ti.info.description, 'table-info-pragma');
 		return false;
 	};
 	
