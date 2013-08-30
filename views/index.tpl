@@ -110,9 +110,10 @@
 			alert('This application requires a browser with XML support.');
 		}
 		this.request = req;
-		this.loadJSON = function (url, loadHandler) {
+		this.loadJSON = function (url, loadHandler, async) {
+			async = async || true;
 			if (this.request) {
-				this.request.open('GET', url, true);
+				this.request.open('GET', url, async);
 				this.request.onreadystatechange = function() {
 					req = me.request;
 					if (req.readyState === 4 && req.status === 200) {
@@ -153,7 +154,6 @@
 					that.database = database;
 					var q = 'select type,name,tbl_name,sql from sqlite_master';
 					that.execute(q, function (ret) {
-						// createDBInfoTable(ret.rows);
 						clearTable('database-info');
 						createTable(ret.rows, ret.description, 'database-info');
 						document.queryForm.query.focus();
