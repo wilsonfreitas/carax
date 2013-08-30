@@ -12,9 +12,12 @@
 	p { padding: 0; margin: 0; border: 0; }
 	textarea { width: 100%; height: 65%; font-size: 120%;}
 	h3 {font-size: 90%;}
-	table { table-collapse: collapse; border-spacing: 1px; font-size: 80%; background: black; margin: 2px;}
-	td {border: 0px solid black; padding: 3px; background-color: white;}
-	th {border: 0px solid black; padding: 3px; background-color: grey; color: white;}
+	table { 
+		border-collapse: collapse;
+/*		line-height: 1.5;*/
+		border-spacing: 1px; font-size: 80%; background: black; margin: 2px;}
+	td {border: 0px solid black; padding: 3px; background-color: white; border: 1px solid black;}
+	th {border: 0px solid black; padding: 3px; background-color: grey; color: white; border: 1px solid black;}
 	/*	.database-results { font-size: 70%;}*/
 	.first-col-head, .first-col-body { text-align: center; background: grey; color: white;}
 	.float-divider { clear:both; display:block;
@@ -65,6 +68,7 @@
 			</div></div>
 
 		  <div id="content"><div class="oi2">
+				<p id="table-info"></p>
 		    <span class="float-divider"></span></div></div>
 		  <div class="float-divider"></div>
 		</div>
@@ -152,10 +156,11 @@
 			setdbReq.loadJSON(qs, function(r) {
 				if (r) {
 					that.database = database;
-					var q = 'select type,name,tbl_name,sql from sqlite_master';
+					var q = 'select type,name,sql from sqlite_master';
 					that.execute(q, function (ret) {
 						clearTable('database-info');
-						createTable(ret.rows, ret.description, 'database-info');
+						var nret = prepareTableInfo(ret.rows, ret.description);
+						createTable(nret.rows, nret.description, 'database-info');
 						document.queryForm.query.focus();
 					});
 				}
@@ -165,7 +170,46 @@
 		return that;
 	};
 	
+	var TableInfo = function(info) {
+		var that = {
+			type: info[0],
+			name: info[1],
+			sql: info[2]
+		};
+		that.getKey = function() {
+			return "{type}:{name}".supplant(that);
+		}
+		return that;
+	}
+	
+	var tableInfos = {};
 	var app = new Sequela();
+	
+	function prepareTableInfo(rows, description) {
+		var newRows = new Array();
+		var newDesc = [['type'], ['name']];
+		var i, ti;
+		var a;
+		
+		for (i=0 ; i<rows.length ; i++) {
+			ti = new TableInfo(rows[i]);
+			tableInfos[ti.name] = ti;
+			a = '<a href="#" onclick="return showTableInfo(\'{name}\');">{name}</a>'.supplant(ti);
+			newRows[i] = [ti.type, a];
+		}
+		
+		return {
+			description: newDesc,
+			rows: newRows
+		};
+	};
+	
+	function showTableInfo(name) {
+		var ti = tableInfos[name];
+		var p = document.getElementById("table-info");
+		p.innerHTML = "Name: {name}<br>Type: {type}<br>SQL: {sql}".supplant(ti);
+		return false;
+	};
 	
 	function createDBInfoTable(rows) {
 		var tr, td, row;
