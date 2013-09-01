@@ -1,7 +1,11 @@
-from bottle import route, run, template, request, view
+from bottle import route, run, template, request, view, static_file
 import sqlite3
 import os
 import json
+
+@route("/static/<filepath:path>")
+def serve_static(filepath):
+	return static_file(filepath, root=os.path.join(os.getcwd(), 'static'))
 
 @route('/execute')
 def execute():
