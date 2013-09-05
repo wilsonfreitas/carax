@@ -63,6 +63,7 @@
 
 	<!-- END of the page -->
   <script src="/static/js/sequela.js"></script>
+  <!-- // <script src="//code.jquery.com/jquery.js"></script> -->
   <!-- // <script src="/static/js/bootstrap.min.js"></script> -->
 </body>
 </html>
