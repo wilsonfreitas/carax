@@ -3,6 +3,11 @@ import sqlite3
 import os
 import json
 
+@route("/spec/<filepath:path>")
+def serve_spec(filepath):
+	print os.path.join(os.getcwd(), 'spec')
+	return static_file(filepath, root=os.path.join(os.getcwd(), 'spec'))
+
 @route("/static/<filepath:path>")
 def serve_static(filepath):
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'static'))
@@ -20,6 +25,10 @@ def execute():
 @route('/check')
 def check():
 	return str(os.path.exists(request.query.get('database'))).lower()
+
+@route('/test')
+def test():
+	return "true"
 
 @route('/')
 def index():
