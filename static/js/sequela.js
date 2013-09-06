@@ -36,6 +36,97 @@ function Ajax() {
 	};
 };
 
+var marajax = (function () {
+    'use strict';
+    function Marajax() {
+        var that = {}, req = null;
+        if (window.XMLHttpRequest) {
+            try {
+                req = new XMLHttpRequest();
+            } catch (e) {
+                throw {
+                    name: 'ObjectNotFoundError',
+                    message: 'This application requires a browser with XML support.'
+                };
+            }
+        } else {
+            throw {
+                name: 'TypeError',
+                message: 'This application requires a browser with XML support.'
+            };
+        }
+        that.request = req;
+        that.go = function (o) {
+            if (!o.url) {
+                throw {
+                    name: "MissingURLError",
+                    message: "URL must be provided in order to execute a request."
+                };
+            }
+            var n = {};
+            n.url = o.url,
+            n.async = o.async || true,
+            n.success = o.success || function (c) {
+                console.log(c);
+            },
+            n.fail = o.fail || function (c) {
+                console.log(c);
+            },
+            n.queryString = o.queryString || null,
+            n.output = o.output || 'text',
+            n.post = o.post || false;
+            if (post) {
+                that.post(n);
+            } else {
+                that.get(n);
+            }
+        };
+        that.get = function (config) {
+            that.request.onreadystatechange = that.responseProcessor(config);
+            that.request.open('GET', config.url, config.async);
+            that.request.send(null);
+        };
+        that.post = function (config) {
+            that.request.onreadystatechange = that.responseProcessor(config);
+            // that.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            that.request.open('POST', config.url, config.async);
+            that.request.send(that.queryString(config.params));
+        };
+        that.responseProcessor = function (config) {
+            return function () {
+                if (that.request.readyState === 4) {
+                    if (that.request.status === 200) {
+                        if (config.output === 'text') {
+                            config.success(that.request.responseText);
+                        } else if (config.output === 'json') {
+                            config.success(eval('(' + that.request.responseText + ')'));
+                        } else if (config.output === 'xml') {
+                            config.success(that.request.responseXML);
+                        }
+                    } else {
+                        config.fail({
+                            state: that.request.readyState,
+                            status: that.request.status,
+                            statusText: that.request.statusText
+                        });
+                    }
+                }
+            };
+        };
+        that.queryString = function (obj) {
+            var q = "", key;
+            if (obj) {
+                for (key in obj) {
+                    q += key + "=" + encodeURIComponent(obj[key]) + "&";
+                }
+            }
+            return q;
+        };
+        return that;
+    }
+    return new Marajax();
+}());
+
 var Sequela = function () {
 	var that = {};
 	that.database = null;
