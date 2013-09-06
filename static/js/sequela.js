@@ -75,7 +75,7 @@ var marajax = (function () {
             n.queryString = o.queryString || null,
             n.output = o.output || 'text',
             n.post = o.post || false;
-            if (post) {
+            if (n.post) {
                 that.post(n);
             } else {
                 that.get(n);
