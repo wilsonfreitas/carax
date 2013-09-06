@@ -1,11 +1,10 @@
-from bottle import route, run, template, request, view, static_file
+from bottle import route, run, template, request, view, static_file, post
 import sqlite3
 import os
 import json
 
 @route("/spec/<filepath:path>")
 def serve_spec(filepath):
-	print os.path.join(os.getcwd(), 'spec')
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'spec'))
 
 @route("/static/<filepath:path>")
@@ -25,6 +24,16 @@ def execute():
 @route('/check')
 def check():
 	return str(os.path.exists(request.query.get('database'))).lower()
+
+@post('/test')
+def do_test():
+	param = request.forms.get('param1')
+	name = request.forms.get('name')
+	return json.dumps(dict(param=param, age=37, name=name))
+
+@post('/ie') # internalerror
+def do_test():
+	raise Exception("Exception raised")
 
 @route('/test')
 def test():
