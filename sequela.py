@@ -1,4 +1,5 @@
-from bottle import route, run, template, request, view, static_file, post
+from bottle import route, run, template, request, view, static_file, post, get,\
+	response
 import sqlite3
 import os
 import json
@@ -30,6 +31,17 @@ def do_test():
 	param = request.forms.get('param1')
 	name = request.forms.get('name')
 	return json.dumps(dict(param=param, age=37, name=name))
+
+@get('/testparams')
+def testparams():
+	param = request.query.get('param1')
+	name = request.query.get('name')
+	return json.dumps(dict(param=param, age=37, name=name))
+
+@get('/testxml')
+def testxml():
+	response.content_type = 'text/xml'
+	return "<span>true</span>"
 
 @post('/ie') # internalerror
 def do_test():
