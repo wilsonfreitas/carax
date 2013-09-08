@@ -64,7 +64,7 @@ var marajax = (function() {
                         if (config.output === 'text') {
                             config.success(that.request.responseText);
                         } else if (config.output === 'json') {
-                            config.success(eval('(' + that.request.responseText + ')'));
+                            config.success(JSON.parse(that.request.responseText));
                         } else if (config.output === 'xml') {
                             config.success(that.request.responseXML);
                         }
