@@ -8,23 +8,47 @@ import json
 def serve_spec(filepath):
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'spec'))
 
+
 @route("/static/<filepath:path>")
 def serve_static(filepath):
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'static'))
 
+
 @post('/execute')
 def do_execute():
-	db = sqlite3.connect(request.forms.get('database'))
-	c = db.cursor()
+	return execute(sqlite3.connect(request.forms.get('database')),
+		request.forms.get('query'))
+
+
+@get('/execute')
+def get_execute():
+	return execute(sqlite3.connect(request.query.get('database')),
+		request.query.get('query'))
+
+
+def execute(con, query):
+	"""
+	Execute the query in database. 
+	con is a SQLite connection and query is a string.
+	Returns a dict with the query, the rows and column's names in the 
+	description item.
+	"""
+	c = con.cursor()
 	data = {}
-	data['query'] = request.forms.get('query')
-	data['rows'] = c.execute(data['query']).fetchall()
+	data['query'] = query
+	data['rows'] = c.execute(query).fetchall()
 	data["description"] = c.description
 	return json.dumps(data)
+
 
 @route('/check')
 def check():
 	return str(os.path.exists(request.query.get('database'))).lower()
+
+'''
+Functions to help with the test cases (actually they call it specs, but I can't
+understand why.)
+'''
 
 @post('/test')
 def do_test():
