@@ -31,10 +31,10 @@ var marajax = (function() {
             n.url = o.url;
             n.async = o.async || true;
             n.success = o.success || function(c) {
-                console.log('Non implemented success: ' + c);
+                console.log('Non implemented success: ' + JSON.stringify(c));
             };
             n.fail = o.fail || function(c) {
-                console.log('Non implemented fail: ' + c);
+                console.log('Non implemented fail: ' + JSON.stringify(c));
             };
             n.queryString = that.queryString(o.params || null);
             n.output = o.output || 'text';
