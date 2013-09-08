@@ -4,6 +4,11 @@ import sqlite3
 import os
 import json
 
+@route('/')
+def index():
+	return template('index')
+
+
 @route("/spec/<filepath:path>")
 def serve_spec(filepath):
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'spec'))
@@ -74,9 +79,5 @@ def do_test():
 @route('/test')
 def test():
 	return "true"
-
-@route('/')
-def index():
-	return template('index')
 
 run(host='localhost', port=8080, debug=True, reloader=True)
