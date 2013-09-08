@@ -1,22 +1,36 @@
-var sequela = (function() {
+var sequela = (function () {
     'use strict';
+
+
+    function QueryResult(serverResult) {
+        var i, that = {};
+        that.query = serverResult.query;
+        that.rows = serverResult.rows;
+        that.colnames = new Array();
+        for (i=0 ; i<serverResult.description.length ; i++) {
+            that.colnames[that.colnames.length] = serverResult.description[i][0];
+        }
+        return that;
+    };
+
 
     function Sequela() {
         var that = {};
-        that.database = null;
-        that.execute = function(query, contentHandler, async) {
-            async = async || true;
-            var setdbReq = new Ajax();
-            var qs = "/execute?query={query}&database={database};".supplant({
-                'query': query,
-                'database': that.database
-            });
-            setdbReq.loadJSON(qs, function(ret) {
-                contentHandler(ret)
-            }, async);
-            return false;
+        var wrapToQueryResult = function (callback) {
+            return function (serverResult) {
+                callback(new QueryResult(serverResult));
+            };
         };
-        that.executeQuery = function(query, id) {
+        that.execute = function (database, query, callback) {
+            marajax.go({
+                url: '/execute',
+                params: { database: database, query: query },
+                success: wrapToQueryResult(callback),
+                output: 'json',
+                post: true
+            });
+        };
+        that.executeQuery = function (query, id) {
             query = query.replace(/\n/g, ' ');
             return app.execute(query, function(ret) {
                 clearTable(id);
@@ -24,7 +38,7 @@ var sequela = (function() {
                 document.queryForm.query.focus();
             });
         };
-        that.check = function(database, callback) {
+        that.check = function (database, callback) {
             marajax.go({
                 url: '/check',
                 params: { database: database },
