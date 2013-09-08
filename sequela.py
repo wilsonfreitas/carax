@@ -12,12 +12,12 @@ def serve_spec(filepath):
 def serve_static(filepath):
 	return static_file(filepath, root=os.path.join(os.getcwd(), 'static'))
 
-@route('/execute')
-def execute():
-	db = sqlite3.connect(request.query.get('database'))
+@post('/execute')
+def do_execute():
+	db = sqlite3.connect(request.forms.get('database'))
 	c = db.cursor()
 	data = {}
-	data['query'] = request.query.get('query')
+	data['query'] = request.forms.get('query')
 	data['rows'] = c.execute(data['query']).fetchall()
 	data["description"] = c.description
 	return json.dumps(data)
