@@ -44,6 +44,27 @@ describe("Sequela", function() {
                 expect(res.value).toEqual(false);
             });
         });
+        
+    });
+    
+    
+    describe("execute", function() {
+        
+        it("it should execute a query in the database", function () {
+            var q = 'select type,name,sql from sqlite_master';
+            seq.execute('test.db', q, catchResponse());
+            waitsFor(function() { return typeof res.value !== 'undefined'; });
+            runs(function() {
+                console.log(res.value);
+                expect(res.value.query).toEqual(q);
+                expect(res.value.rows.length).toEqual(1);
+                expect(res.value.colnames.length).toEqual(3);
+                expect(res.value.colnames[0]).toEqual('type');
+                expect(res.value.colnames[1]).toEqual('name');
+                expect(res.value.colnames[2]).toEqual('sql');
+            });
+        });
+        
     });
 
 });
