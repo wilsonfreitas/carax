@@ -44,8 +44,24 @@ describe("Sequela", function() {
     
     describe("execute", function() {
         
+        
         it("it should execute a query in the database", function () {
             var q = 'select type,name,sql from sqlite_master';
+            seq.execute('test.db', q, catchResponse());
+            waitsFor(function() { return typeof res.value !== 'undefined'; });
+            runs(function() {
+                expect(res.value.query).toEqual(q);
+                expect(res.value.rows.length).toEqual(1);
+                expect(res.value.colnames.length).toEqual(3);
+                expect(res.value.colnames[0]).toEqual('type');
+                expect(res.value.colnames[1]).toEqual('name');
+                expect(res.value.colnames[2]).toEqual('sql');
+            });
+        });
+        
+        
+        it("it should execute an invalid query in the database", function () {
+            var q = 'select * from blah';
             seq.execute('test.db', q, catchResponse());
             waitsFor(function() { return typeof res.value !== 'undefined'; });
             runs(function() {
@@ -58,7 +74,8 @@ describe("Sequela", function() {
                 expect(res.value.colnames[2]).toEqual('sql');
             });
         });
-        
+
+
     });
 
 });
