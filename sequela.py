@@ -21,12 +21,14 @@ def serve_static(filepath):
 
 @post('/execute')
 def do_execute():
+	response.content_type = 'application/json'
 	return execute(sqlite3.connect(request.forms.get('database')),
 		request.forms.get('query'))
 
 
 @get('/execute')
 def get_execute():
+	response.content_type = 'application/json'
 	return execute(sqlite3.connect(request.query.get('database')),
 		request.query.get('query'))
 
@@ -48,6 +50,7 @@ def execute(con, query):
 
 @route('/check')
 def check():
+	response.content_type = 'application/json'
 	return str(os.path.exists(request.query.get('database'))).lower()
 
 '''
