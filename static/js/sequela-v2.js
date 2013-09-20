@@ -6,21 +6,20 @@ var sequela = (function () {
         var i, that = {};
         that.query = serverResult.query;
         that.rows = serverResult.rows;
-        that.colnames = new Array();
+        that.colnames = [];
         for (i=0 ; i<serverResult.description.length ; i++) {
             that.colnames[that.colnames.length] = serverResult.description[i][0];
         }
         return that;
-    };
-
+    }
 
     function Sequela() {
-        var that = {};
-        var wrapToQueryResult = function (callback) {
-            return function (serverResult) {
-                callback(new QueryResult(serverResult));
+        var that = {},
+            wrapToQueryResult = function (callback) {
+                return function (serverResult) {
+                    callback(new QueryResult(serverResult));
+                };
             };
-        };
         that.execute = function (database, query, callback) {
             marajax.go({
                 url: '/execute',
@@ -30,28 +29,20 @@ var sequela = (function () {
                 post: true
             });
         };
-        that.executeQuery = function (query, id) {
-            query = query.replace(/\n/g, ' ');
-            return app.execute(query, function(ret) {
-                clearTable(id);
-                createTable(ret.rows, ret.description, id);
-                document.queryForm.query.focus();
-            });
-        };
         that.check = function (database, callback) {
             marajax.go({
                 url: '/check',
                 params: { database: database },
                 success: callback,
-                output: 'json',
+                output: 'json'
             });
         };
         return that;
-    };
-    
+    }
+
     return {
-        create: function() {
+        create: function () {
             return new Sequela();
         }
     };
-})();
+}());
