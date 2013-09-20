@@ -43,8 +43,14 @@ def execute(con, query):
 	c = con.cursor()
 	data = {}
 	data['query'] = query
-	data['rows'] = c.execute(query).fetchall()
-	data["description"] = c.description
+	data['rows'] = None
+	data["description"] = None
+	data['error'] = None
+	try:
+		data['rows'] = c.execute(query).fetchall()
+		data["description"] = c.description
+	except Exception as e:
+		data['error'] = str(e)
 	return json.dumps(data)
 
 

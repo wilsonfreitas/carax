@@ -6,18 +6,29 @@ var sequela = (function () {
         var i, that = {};
         that.query = serverResult.query;
         that.rows = serverResult.rows;
-        that.colnames = [];
-        for (i=0 ; i<serverResult.description.length ; i++) {
-            that.colnames[that.colnames.length] = serverResult.description[i][0];
+        that.colnames = null;
+        that.error = serverResult.error;
+        if (serverResult.description !== null) {
+            that.colnames = [];
+            for (i = 0; i < serverResult.description.length; i += 1) {
+                that.colnames[that.colnames.length] = serverResult.description[i][0];
+            }
         }
         return that;
     }
 
-    function Sequela() {
+    var identity = function identity(x) {
+        return x;
+    }, createQueryResult = function createQueryResult(result) {
+        return new QueryResult(result);
+    };
+
+    function Sequela(resultWraper) {
+        resultWraper = resultWraper || identity;
         var that = {},
             wrapToQueryResult = function (callback) {
                 return function (serverResult) {
-                    callback(new QueryResult(serverResult));
+                    callback(resultWraper(serverResult));
                 };
             };
         that.execute = function (database, query, callback) {
@@ -41,8 +52,9 @@ var sequela = (function () {
     }
 
     return {
-        create: function () {
-            return new Sequela();
-        }
+        createSequela: function (qrFactory) {
+            return new Sequela(qrFactory);
+        },
+        createQueryResult: createQueryResult
     };
 }());
