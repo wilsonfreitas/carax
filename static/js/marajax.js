@@ -1,5 +1,5 @@
 
-var marajax = (function() {
+var marajax = (function () {
     'use strict';
 
     function Marajax() {
@@ -20,7 +20,7 @@ var marajax = (function() {
             };
         }
         that.request = req;
-        that.go = function(o) {
+        that.go = function (o) {
             if (!o.url) {
                 throw {
                     name: "MissingURLError",
@@ -30,10 +30,10 @@ var marajax = (function() {
             var n = {};
             n.url = o.url;
             n.async = o.async || true;
-            n.success = o.success || function(c) {
+            n.success = o.success || function (c) {
                 console.log('Non implemented success: ' + JSON.stringify(c));
             };
-            n.fail = o.fail || function(c) {
+            n.fail = o.fail || function (c) {
                 console.log('Non implemented fail: ' + JSON.stringify(c));
             };
             n.queryString = that.queryString(o.params || null);
@@ -46,18 +46,18 @@ var marajax = (function() {
                 that.get(n);
             }
         };
-        that.get = function(config) {
+        that.get = function (config) {
             that.request.onreadystatechange = that.responseProcessor(config);
             that.request.open('GET', config.url, config.async);
             that.request.send(null);
         };
-        that.post = function(config) {
+        that.post = function (config) {
             // that.request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             that.request.onreadystatechange = that.responseProcessor(config);
             that.request.open('POST', config.url, config.async);
             that.request.send(config.queryString);
         };
-        that.responseProcessor = function(config) {
+        that.responseProcessor = function (config) {
             return function() {
                 if (that.request.readyState === 4) {
                     if (that.request.status === 200) {
@@ -78,7 +78,7 @@ var marajax = (function() {
                 }
             };
         };
-        that.queryString = function(obj) {
+        that.queryString = function (obj) {
             var q = "",
                 key;
             if (obj) {
