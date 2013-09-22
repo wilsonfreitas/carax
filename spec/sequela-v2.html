@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>sequela-a minimalist SQLite frontend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!-- Bootstrap -->
+  <link href="../static/css/bootstrap.css" rel="stylesheet">
+  <style type="text/css">
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+  </style>
+  <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
+  <!-- include source files here... -->
+  <!-- // <script type="text/javascript" src="../static/js/marajax.js"></script> -->
+  <script type="text/javascript" src="../static/js/sequela-v2.js"></script>
+</head>
+
+<body>
+	
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="brand" href="#">Sequela</a>
+        <div class="nav-collapse collapse">
+          <ul class="nav">
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+          <form class="navbar-form pull-right">
+            <input class="span8" type="text" placeholder="Path to database">
+            <button type="submit" class="btn">Connect to database</button>
+          </form>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+
+    <div class="row-fluid">
+      <div class="well span3 sidebar-nav">
+        <h4>Database info</h4>
+        <table class="table table-condensed">
+          <thead><tr><th>#</th><th>TYPE</th><th>NAME</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="span9">
+        <div class="tabbable"> <!-- Only required for left/right tabs -->
+          <ul class="nav nav-tabs" id="myTab">
+            <li><a href="#tab1" data-toggle="tab">Execute SQL</a></li>
+            <li class="active"><a href="#tab2" data-toggle="tab">Table info</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane" id="tab1">
+              <div class="row-fluid">
+                <h4>SQL statements:</h4>
+                <textarea name="Name" class="span12" style="font-family: monospace"></textarea>
+                <button type="submit" class="btn">Execute SQL</button>
+              </div>
+              <div class="row-fluid">
+                <h4>Results:</h4>
+                <div class="well">
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane active" id="tab2">
+              <div class="row-fluid">
+                <div class="well">
+                  <dl>
+                    <dt>Name:</dt>
+                    <dd>stocks</dd>
+                    <dt>Type:</dt>
+                    <dd>table</dd>
+                    <dt>SQL:</dt>
+                    <dd> <code>CREATE TABLE stocks (date text, trans text, symbol text, qty real, price real)</code> </dd>
+                    <dt>Count:</dt>
+                    <dd>1</dd>
+                  </dl>
+                </div>
+            </div>
+            <div class="row-fluid">
+              <table class="table table-condensed">
+              <thead><tr><th class="first-col-head">N</th><th>CID</th><th>NAME</th><th>TYPE</th><th>NOTNULL</th><th>DFLT_VALUE</th><th>PK</th></tr></thead><tbody><tr><td class="first-col-body">1</td><td>0</td><td>date</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">2</td><td>1</td><td>trans</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">3</td><td>2</td><td>symbol</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">4</td><td>3</td><td>qty</td><td>real</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">5</td><td>4</td><td>price</td><td>real</td><td>0</td><td></td><td>0</td></tr></tbody></table>
+            </div> 
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+    <hr>
+    <footer>
+      <p>Sequela is a free software brought to you by Wilson Freitas
+        <br>&copy; Wilson Freitas 2013</p>
+    </footer>
+  </div> <!-- /container -->
+
+  <script src="http://code.jquery.com/jquery.js"></script>
+  <script src="../static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+  $(function () {
+    $('#myTab a:last').tab('show');
+  })
+    
+  </script>
+</body>
+</html>
