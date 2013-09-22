@@ -15,8 +15,6 @@
   </style>
   <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
   <!-- include source files here... -->
-  <!-- // <script type="text/javascript" src="../static/js/marajax.js"></script> -->
-  <script type="text/javascript" src="../static/js/sequela-v2.js"></script>
 </head>
 
 <body>
@@ -35,8 +33,8 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
-          <form class="navbar-form pull-right">
-            <input class="span8" type="text" placeholder="Path to database">
+          <form class="navbar-form pull-right" onsubmit="return checkDatabase(this.path.value);">
+            <input class="span8" type="text" placeholder="Path to database" id="path">
             <button type="submit" class="btn">Connect to database</button>
           </form>
         </div><!--/.nav-collapse -->
@@ -49,25 +47,7 @@
     <div class="row-fluid">
       <div class="well span3 sidebar-nav">
         <h4>Database info</h4>
-        <table class="table table-condensed">
-          <thead><tr><th>#</th><th>TYPE</th><th>NAME</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-            <tr><td>1</td><td>table</td><td><a href="#" onclick="return showTableInfo('stocks');">stocks</a></td></tr>
-          </tbody>
-        </table>
+        <div id='database-info'></div>
       </div>
       <div class="span9">
         <div class="tabbable"> <!-- Only required for left/right tabs -->
@@ -115,18 +95,100 @@
     </div>
     <hr>
     <footer>
-      <p>Sequela is a free software brought to you by Wilson Freitas
+      <p>Sequela is a free software brought by Wilson Freitas
         <br>&copy; Wilson Freitas 2013</p>
     </footer>
   </div> <!-- /container -->
 
   <script src="http://code.jquery.com/jquery.js"></script>
   <script src="../static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../static/js/marajax.js"></script>
+  <script type="text/javascript" src="../static/js/sequela-v2.js"></script>
   <script type="text/javascript" charset="utf-8">
   $(function () {
     $('#myTab a:last').tab('show');
-  })
-    
+  });
+
+  function NavList(headers, rows) {
+    var that = {}, i, j, inEl,
+      list = document.createElement('ul');
+    list.className = 'nav nav-list';
+
+    for (i = 0; i < headers.length; i += 1) {
+      inEl = document.createElement('li');
+      inEl.className = 'nav-header';
+      inEl.innerHTML = headers[i];
+      list.appendChild(inEl);
+      for (j = 0; j < rows[i].length; j += 1) {
+        inEl = document.createElement('li');
+        inEl.innerHTML = '<a href="#">{name}</a>'.supplant({
+          name: rows[i][j].name
+        });
+        list.appendChild(inEl);
+      }
+    }
+
+    that.getElement = function () {
+      return list;
+    };
+
+    return that;
+  }
+
+  function Link(text, href, onclick) {
+    var that = {},
+      a = document.createElement('a');
+    a.href = href;
+    a.onclick = onclick;
+    a.title = text;
+    a.appendChild(document.createTextNode(text));
+    that.getElement = function () {
+      return a;
+    };
+    return that;
+  }
+
+  var checkDatabase = function checkDatabase(database) {
+    var dbi = sequela.createDatabaseInfo(database);
+
+    when(dbi.checked, function () {
+      var div = document.getElementById('database-info');
+      while (div.hasChildNodes()) {
+          div.removeChild(div.lastChild);
+      }
+      var navList = new NavList(['Tables', 'Indexes'],
+        [dbi.tables, dbi.indexes]
+      );
+      div.appendChild(navList.getElement());
+    });
+
+    return false; // don't submit form
+  }
+  
+  function when(pred, func, counter) {
+    counter = counter || 0;
+    counter += 1;
+    window.setTimeout(function () {
+      if (pred()) {
+        func();
+      } else {
+        if (counter == 100) {
+          return;
+        }
+        when(pred, func, counter);
+      }
+    }, 10);
+  }
+  
+  String.prototype.supplant = function (o) {
+  	return this.replace(/{([^{}]*)}/g,
+  		function (a, b) {
+  			var r = o[b];
+  			return typeof r === 'string' || typeof r === 'number' ? r : a;
+  		}
+  	);
+  };
+  // return (function () { alert(this.path.value); return false; }());
   </script>
 </body>
 </html>

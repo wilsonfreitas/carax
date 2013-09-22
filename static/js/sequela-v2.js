@@ -43,7 +43,7 @@ var sequela = (function () {
         };
         that.getElement = function () {
             return table;
-        }
+        };
         return that;
     }
 
@@ -69,12 +69,12 @@ var sequela = (function () {
         return new QueryResult(result);
     };
 
-    function Sequela(resultWraper) {
-        resultWraper = resultWraper || identity;
+    function Sequela(resultWrapper) {
+        resultWrapper = resultWrapper || identity;
         var that = {},
             wrapToQueryResult = function (callback) {
                 return function (serverResult) {
-                    callback(resultWraper(serverResult));
+                    callback(resultWrapper(serverResult));
                 };
             };
         that.execute = function (database, query, callback) {
@@ -97,6 +97,59 @@ var sequela = (function () {
         return that;
     }
 
+    var sequela = new Sequela(createQueryResult);
+
+    function DatabaseInfo(database) {
+        var that = {};
+        that.tables = [];
+        that.indexes = [];
+        that.database = database;
+        var loadQueryResult = function (qr) {
+            var row, i;
+            for (i = 0; i < qr.rows.length; i += 1) {
+                row = qr.rows[i];
+                if (row[0] === 'table') {
+                    that.tables[that.tables.length] = {
+                        name: row[1],
+                        sql: row[2]
+                    };
+                } else if (row[0] === 'index') {
+                    that.indexes[that.indexes.length] = {
+                        name: row[1],
+                        sql: row[2]
+                    };
+                }
+            }
+        };
+
+        sequela.check(database, function (db_checked) {
+            that._checked = db_checked;
+            if (db_checked) {
+                sequela.execute(database, 'select type,name,sql from sqlite_master',
+                    function (qr) {
+                        that.content = qr;
+                        loadQueryResult(qr);
+                    }
+                );
+            }
+        });
+
+        that.checked = function () {
+            if (typeof that._checked !== 'undefined') {
+                if (that._checked) {
+                    return typeof that.content !== 'undefined';
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        };
+
+        return that;
+    }
+
+
     return {
         createSequela: function (qrFactory) {
             return new Sequela(qrFactory);
@@ -104,6 +157,9 @@ var sequela = (function () {
         createQueryResult: createQueryResult,
         createTable: function (id, cls) {
             return new Table(id, cls);
+        },
+        createDatabaseInfo: function (database, render_callback) {
+            return new DatabaseInfo(database, render_callback);
         }
     };
 }());
