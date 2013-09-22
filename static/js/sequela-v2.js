@@ -1,6 +1,52 @@
 var sequela = (function () {
     'use strict';
 
+    function Table(id, cls) {
+        var that = {},
+            table = document.createElement('table'),
+            createHeader = function (header) {
+                var i = 0,
+                    thead = document.createElement('thead'),
+                    tr = thead.insertRow(0),
+                    td = document.createElement('th');
+                td.innerHTML = '#';
+                // td.className = 'first-col-head';
+                tr.appendChild(td);
+                for (i = 0; i < header.length; i += 1) {
+                    td = document.createElement('th');
+                    td.innerHTML = header[i].toUpperCase();
+                    tr.appendChild(td);
+                }
+                return thead;
+            },
+            createBody = function (rows) {
+                var i, j, row, tr, td,
+                    tbody = document.createElement('tbody');
+                for (i = 0; i < rows.length; i += 1) {
+                    row = rows[i];
+                    tr = tbody.insertRow(tbody.rows.length);
+                    td = tr.insertCell(tr.cells.length);
+                    td.innerHTML = i + 1;
+                    // td.className = 'first-col-body';
+                    for (j = 1; j < (row.length + 1); j += 1) {
+                        td = tr.insertCell(tr.cells.length);
+                        td.innerHTML = row[j - 1];
+                    }
+                }
+                return tbody;
+            };
+        table.id = id;
+        table.className = cls;
+        that.addContent = function (qr) {
+            table.appendChild(createHeader(qr.colnames));
+            table.appendChild(createBody(qr.rows));
+        };
+        that.getElement = function () {
+            return table;
+        }
+        return that;
+    }
+
 
     function QueryResult(serverResult) {
         var i, that = {};
@@ -55,6 +101,9 @@ var sequela = (function () {
         createSequela: function (qrFactory) {
             return new Sequela(qrFactory);
         },
-        createQueryResult: createQueryResult
+        createQueryResult: createQueryResult,
+        createTable: function (id, cls) {
+            return new Table(id, cls);
+        }
     };
 }());
