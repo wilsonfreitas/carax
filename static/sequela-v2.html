@@ -53,7 +53,7 @@
         <div class="tabbable"> <!-- Only required for left/right tabs -->
           <ul class="nav nav-tabs" id="myTab">
             <li><a href="#tab1" data-toggle="tab">Execute SQL</a></li>
-            <li class="active"><a href="#tab2" data-toggle="tab">Table info</a></li>
+            <li><a href="#tab2" data-toggle="tab">Table info</a></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane" id="tab1">
@@ -68,8 +68,8 @@
                 </div>
               </div>
             </div>
-            <div class="tab-pane active" id="tab2">
-              <div class="row-fluid">
+            <div class="tab-pane" id="tab2">
+              <div class="row-fluid" id='table-info'>
                 <div class="well">
                   <dl>
                     <dt>Name:</dt>
@@ -105,9 +105,45 @@
   <script type="text/javascript" src="../static/js/marajax.js"></script>
   <script type="text/javascript" src="../static/js/sequela-v2.js"></script>
   <script type="text/javascript" charset="utf-8">
+  // The following statement sets the first tab to appear.
+  // 
   $(function () {
-    $('#myTab a:last').tab('show');
+    $('#myTab li:eq(0) a').tab('show');
   });
+
+  function TableInfoDiv(tableInfo) {
+    var that = {}, dt, dd,
+      div = document.createElement('div'),
+      dl = document.createElement('dl');
+    div.className = 'well';
+    div.appendChild(dl);
+    // Name:
+    dt = document.createElement('dt');
+    dt.appendChild(document.createTextNode('Name:'));
+    dd = document.createElement('dd');
+    dd.appendChild(document.createTextNode(tableInfo.name));
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+    // Type:
+    dt = document.createElement('dt');
+    dt.appendChild(document.createTextNode('Type:'));
+    dd = document.createElement('dd');
+    dd.appendChild(document.createTextNode(tableInfo.type));
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+    // SQL:
+    dt = document.createElement('dt');
+    dt.appendChild(document.createTextNode('Type:'));
+    dd = document.createElement('dd');
+    dd.appendChild(document.createTextNode(tableInfo.sql));
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+    //
+    that.getElement = function () {
+      return div;
+    }
+    return that;
+  }
 
   function NavList(entities, createLink) {
     var that = {}, i, j, inEl,
@@ -151,8 +187,12 @@
   
   function createNavListLink(o) {
     return Link(o.name, '#', function () {
-      alert(o.name + ' ' + o.sql);
-      $('#myTab a:last').tab('show');
+      var div = document.getElementById('table-info');
+      while (div.hasChildNodes()) {
+          div.removeChild(div.lastChild);
+      }
+      div.appendChild(TableInfoDiv(o).getElement());
+      $('#myTab li:eq(1) a').tab('show');
     }).getElement();
   }
 
