@@ -82,11 +82,11 @@
                     <dd>1</dd>
                   </dl>
                 </div>
-            </div>
-            <div class="row-fluid">
-              <table class="table table-condensed">
-              <thead><tr><th class="first-col-head">N</th><th>CID</th><th>NAME</th><th>TYPE</th><th>NOTNULL</th><th>DFLT_VALUE</th><th>PK</th></tr></thead><tbody><tr><td class="first-col-body">1</td><td>0</td><td>date</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">2</td><td>1</td><td>trans</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">3</td><td>2</td><td>symbol</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">4</td><td>3</td><td>qty</td><td>real</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">5</td><td>4</td><td>price</td><td>real</td><td>0</td><td></td><td>0</td></tr></tbody></table>
-            </div> 
+              </div>
+              <div class="row-fluid">
+                <table class="table table-condensed">
+                <thead><tr><th class="first-col-head">N</th><th>CID</th><th>NAME</th><th>TYPE</th><th>NOTNULL</th><th>DFLT_VALUE</th><th>PK</th></tr></thead><tbody><tr><td class="first-col-body">1</td><td>0</td><td>date</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">2</td><td>1</td><td>trans</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">3</td><td>2</td><td>symbol</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">4</td><td>3</td><td>qty</td><td>real</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">5</td><td>4</td><td>price</td><td>real</td><td>0</td><td></td><td>0</td></tr></tbody></table>
+              </div> 
             </div>
           </div>
         </div>
@@ -109,23 +109,24 @@
     $('#myTab a:last').tab('show');
   });
 
-  function NavList(headers, rows) {
+  function NavList(entities, createLink) {
     var that = {}, i, j, inEl,
       list = document.createElement('ul');
+    createLink = createLink || function (x) {
+      return document.createTextNode(x);
+    };
     list.className = 'nav nav-list';
 
-    for (i = 0; i < headers.length; i += 1) {
+    for (i in entities) {
       inEl = document.createElement('li');
       inEl.className = 'nav-header';
-      inEl.innerHTML = headers[i];
+      inEl.innerHTML = i;
       list.appendChild(inEl);
-      for (j = 0; j < rows[i].length; j += 1) {
+      entities[i].forEach(function (o) {
         inEl = document.createElement('li');
-        inEl.innerHTML = '<a href="#">{name}</a>'.supplant({
-          name: rows[i][j].name
-        });
+        inEl.appendChild(createLink(o));
         list.appendChild(inEl);
-      }
+      });
     }
 
     that.getElement = function () {
@@ -147,6 +148,13 @@
     };
     return that;
   }
+  
+  function createNavListLink(o) {
+    return Link(o.name, '#', function () {
+      alert(o.name + ' ' + o.sql);
+      $('#myTab a:last').tab('show');
+    }).getElement();
+  }
 
   var checkDatabase = function checkDatabase(database) {
     var dbi = sequela.createDatabaseInfo(database);
@@ -156,9 +164,15 @@
       while (div.hasChildNodes()) {
           div.removeChild(div.lastChild);
       }
-      var navList = new NavList(['Tables', 'Indexes'],
-        [dbi.tables, dbi.indexes]
-      );
+      var entities = {};
+      dbi.entities.forEach(function (o) {
+        if (typeof entities[o.type] === 'undefined') {
+          entities[o.type] = [o];
+        } else {
+          entities[o.type].push(o);
+        }
+      });
+      var navList = new NavList(entities, createNavListLink);
       div.appendChild(navList.getElement());
     });
 
@@ -181,13 +195,21 @@
   }
   
   String.prototype.supplant = function (o) {
-  	return this.replace(/{([^{}]*)}/g,
-  		function (a, b) {
-  			var r = o[b];
-  			return typeof r === 'string' || typeof r === 'number' ? r : a;
-  		}
-  	);
+    return this.replace(/{([^{}]*)}/g,
+      function (a, b) {
+        var r = o[b];
+        return typeof r === 'string' || typeof r === 'number' ? r : a;
+      }
+    );
+  }
+
+  Array.prototype.unique = function() {
+    var o = {}, i, l = this.length, r = [];
+    for(i=0; i<l;i+=1) o[this[i]] = this[i];
+    for(i in o) r.push(o[i]);
+    return r;
   };
+  
   // return (function () { alert(this.path.value); return false; }());
   </script>
 </body>

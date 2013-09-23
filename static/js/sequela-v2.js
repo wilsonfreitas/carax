@@ -101,24 +101,17 @@ var sequela = (function () {
 
     function DatabaseInfo(database) {
         var that = {};
-        that.tables = [];
-        that.indexes = [];
+        that.entities = [];
         that.database = database;
         var loadQueryResult = function (qr) {
             var row, i;
             for (i = 0; i < qr.rows.length; i += 1) {
                 row = qr.rows[i];
-                if (row[0] === 'table') {
-                    that.tables[that.tables.length] = {
-                        name: row[1],
-                        sql: row[2]
-                    };
-                } else if (row[0] === 'index') {
-                    that.indexes[that.indexes.length] = {
-                        name: row[1],
-                        sql: row[2]
-                    };
-                }
+                that.entities[that.entities.length] = {
+                    type: row[0],
+                    name: row[1],
+                    sql: row[2]
+                };
             }
         };
 
