@@ -70,23 +70,8 @@
             </div>
             <div class="tab-pane" id="tab2">
               <div class="row-fluid" id='table-info'>
-                <div class="well">
-                  <dl>
-                    <dt>Name:</dt>
-                    <dd>stocks</dd>
-                    <dt>Type:</dt>
-                    <dd>table</dd>
-                    <dt>SQL:</dt>
-                    <dd> <code>CREATE TABLE stocks (date text, trans text, symbol text, qty real, price real)</code> </dd>
-                    <dt>Count:</dt>
-                    <dd>1</dd>
-                  </dl>
-                </div>
+                <!-- table-info: information about table structure -->
               </div>
-              <div class="row-fluid">
-                <table class="table table-condensed">
-                <thead><tr><th class="first-col-head">N</th><th>CID</th><th>NAME</th><th>TYPE</th><th>NOTNULL</th><th>DFLT_VALUE</th><th>PK</th></tr></thead><tbody><tr><td class="first-col-body">1</td><td>0</td><td>date</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">2</td><td>1</td><td>trans</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">3</td><td>2</td><td>symbol</td><td>text</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">4</td><td>3</td><td>qty</td><td>real</td><td>0</td><td></td><td>0</td></tr><tr><td class="first-col-body">5</td><td>4</td><td>price</td><td>real</td><td>0</td><td></td><td>0</td></tr></tbody></table>
-              </div> 
             </div>
           </div>
         </div>
@@ -111,6 +96,9 @@
     $('#myTab li:eq(0) a').tab('show');
   });
 
+  var identity = function identity(x) {
+      return x;
+  };
 
   function DescriptionList(content) {
     var that = {}, dt, dd,
@@ -118,8 +106,9 @@
 
     content.forEach(function (o) {
       var dt = document.createElement('dt'), dd = document.createElement('dd');
+      decorate = o.decorate || identity;
       dt.appendChild(document.createTextNode(o.label));
-      dd.appendChild(document.createTextNode(o.text));
+      dd.appendChild(decorate(document.createTextNode(o.text)));
       dl.appendChild(dt);
       dl.appendChild(dd);
     });
@@ -136,7 +125,12 @@
     div.appendChild(DescriptionList([
       { label: 'Name:', text: tableInfo.name },
       { label: 'Type:', text: tableInfo.type },
-      { label: 'SQL:', text: tableInfo.sql },
+      { label: 'SQL:', text: tableInfo.sql , decorate: function (e) {
+        var code = document.createElement('pre');
+        code.className = 'pre-scrollable';
+        code.appendChild(e)
+        return code;
+      }},
     ]).getElement());
     that.getElement = function () {
       return div;
