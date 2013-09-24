@@ -111,34 +111,33 @@
     $('#myTab li:eq(0) a').tab('show');
   });
 
-  function TableInfoDiv(tableInfo) {
+
+  function DescriptionList(content) {
     var that = {}, dt, dd,
-      div = document.createElement('div'),
       dl = document.createElement('dl');
+
+    content.forEach(function (o) {
+      var dt = document.createElement('dt'), dd = document.createElement('dd');
+      dt.appendChild(document.createTextNode(o.label));
+      dd.appendChild(document.createTextNode(o.text));
+      dl.appendChild(dt);
+      dl.appendChild(dd);
+    });
+
+    that.getElement = function () {
+      return dl;
+    };
+    return that;
+  }
+
+  function TableInfoDiv(tableInfo) {
+    var that = {}, div = document.createElement('div');
     div.className = 'well';
-    div.appendChild(dl);
-    // Name:
-    dt = document.createElement('dt');
-    dt.appendChild(document.createTextNode('Name:'));
-    dd = document.createElement('dd');
-    dd.appendChild(document.createTextNode(tableInfo.name));
-    dl.appendChild(dt);
-    dl.appendChild(dd);
-    // Type:
-    dt = document.createElement('dt');
-    dt.appendChild(document.createTextNode('Type:'));
-    dd = document.createElement('dd');
-    dd.appendChild(document.createTextNode(tableInfo.type));
-    dl.appendChild(dt);
-    dl.appendChild(dd);
-    // SQL:
-    dt = document.createElement('dt');
-    dt.appendChild(document.createTextNode('Type:'));
-    dd = document.createElement('dd');
-    dd.appendChild(document.createTextNode(tableInfo.sql));
-    dl.appendChild(dt);
-    dl.appendChild(dd);
-    //
+    div.appendChild(DescriptionList([
+      { label: 'Name:', text: tableInfo.name },
+      { label: 'Type:', text: tableInfo.type },
+      { label: 'SQL:', text: tableInfo.sql },
+    ]).getElement());
     that.getElement = function () {
       return div;
     }
