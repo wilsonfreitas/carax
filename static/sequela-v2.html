@@ -103,14 +103,22 @@
 
   // function to define the action of an element
   //
-  function setAction(id, action, func) {
-    var elm;
-    if (typeof id === 'string') {
-      elm = document.getElementById(id);
-    } else {
-      elm = id;
-    }
+  function setAction(elm, action, func) {
+    if (typeof elm === 'string') elm = document.getElementById(elm);
     elm[action] = func;
+  }
+  
+  function cleanElement(elm) {
+    if (typeof elm === 'string') elm = document.getElementById(elm);
+    while (elm.hasChildNodes()) {
+        elm.removeChild(elm.lastChild);
+    }
+  }
+  
+  function replaceWithContent(elm, content) {
+    if (typeof elm === 'string') elm = document.getElementById(elm);
+    cleanElement(elm);
+    elm.appendChild(content);
   }
 
   // Start by focusing the form where the database's path is defined.
@@ -125,10 +133,6 @@
     var dbi = checkDatabase({
       database: this.path.value,
       success: function () {
-        var div = document.getElementById('database-info');
-        while (div.hasChildNodes()) {
-            div.removeChild(div.lastChild);
-        }
         var entities = {};
         dbi.entities.forEach(function (o) {
           if (typeof entities[o.type] === 'undefined') {
@@ -138,7 +142,7 @@
           }
         });
         var navList = new NavList(entities, createNavListLink);
-        div.appendChild(navList.getElement());
+        replaceWithContent('database-info', navList.getElement());
         document.getElementById('sql-code').focus();
       },
       fail: function () {
@@ -152,14 +156,10 @@
   //
   setAction("execute-sql", "onclick", function () {
     var query = document.getElementById('sql-code').value,
-      div = document.getElementById('query-results'),
       table = sequela.createTable('table-query-results', 'table table-striped table-bordered');
     sequela.execute(null, query, function (qr) {
       table.addContent(qr);
-      while (div.hasChildNodes()) {
-          div.removeChild(div.lastChild);
-      }
-      div.appendChild(table.getElement());
+      replaceWithContent('query-results', table.getElement());
     });
   });
 
@@ -246,11 +246,7 @@
 
   function createNavListLink(o) {
     return Link(o.name, '#', function () {
-      var div = document.getElementById('table-info');
-      while (div.hasChildNodes()) {
-          div.removeChild(div.lastChild);
-      }
-      div.appendChild(TableInfoDiv(o).getElement());
+      replaceWithContent('table-info', TableInfoDiv(o).getElement());
       $('#myTab li:eq(1) a').tab('show');
     }).getElement();
   }
