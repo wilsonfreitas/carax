@@ -10,4 +10,4 @@
 	- invalid DB path
 	- invalid query
 	- huge result set
-
+- Put COUNT field in **Table info** pane
