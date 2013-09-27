@@ -6,3 +6,8 @@
 - syntax-highlight
 - Short-cuts
 - Use an *Open File* button to select database file
+- Errors must be handled.
+	- invalid DB path
+	- invalid query
+	- huge result set
+
