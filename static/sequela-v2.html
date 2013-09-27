@@ -19,7 +19,6 @@
   }
   </style>
   <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
-  <!-- include source files here... -->
 </head>
 
 <body>
@@ -38,8 +37,8 @@
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
           </ul>
-          <form class="navbar-form pull-right" onsubmit="return checkDatabase(this.path.value);">
-            <input class="span8" type="text" placeholder="Path to database" id="path">
+          <form class="navbar-form pull-right" name="database">
+            <input class="span8" type="text" placeholder="Path to database" id="path" name="database">
             <button type="submit" class="btn">Connect to database</button>
           </form>
         </div><!--/.nav-collapse -->
@@ -64,13 +63,13 @@
             <div class="tab-pane" id="tab1">
               <div class="row-fluid">
                 <h4>SQL statements:</h4>
-                <textarea name="Name" rows="10" class="span12"></textarea>
-                <button type="submit" class="btn btn-block btn-large btn-primary">
+                <textarea name="sql-code" id="sql-code" rows="10" class="span12" placeholder="Enter SQL code here!"></textarea>
+                <button type="submit" class="btn btn-block btn-large btn-primary" id="execute-sql">
                   Execute SQL</button>
               </div>
               <div class="row-fluid">
                 <h4>Results:</h4>
-                <div class="well">
+                <div class="well" id="query-results">
                 </div>
               </div>
             </div>
@@ -102,10 +101,71 @@
     $('#myTab li:eq(0) a').tab('show');
   });
 
-  var identity = function identity(x) {
-      return x;
-  };
+  // function to define the action of an element
+  //
+  function setAction(id, action, func) {
+    var elm;
+    if (typeof id === 'string') {
+      elm = document.getElementById(id);
+    } else {
+      elm = id;
+    }
+    elm[action] = func;
+  }
 
+  // Start by focusing the form where the database's path is defined.
+  // 
+  setAction(window, 'onload', function () {
+    document.getElementById('path').focus();
+  });
+
+  // Define onsubmit the database call
+  // 
+  setAction(document.database, "onsubmit", function () {
+    var dbi = checkDatabase({
+      database: this.path.value,
+      success: function () {
+        var div = document.getElementById('database-info');
+        while (div.hasChildNodes()) {
+            div.removeChild(div.lastChild);
+        }
+        var entities = {};
+        dbi.entities.forEach(function (o) {
+          if (typeof entities[o.type] === 'undefined') {
+            entities[o.type] = [o];
+          } else {
+            entities[o.type].push(o);
+          }
+        });
+        var navList = new NavList(entities, createNavListLink);
+        div.appendChild(navList.getElement());
+        document.getElementById('sql-code').focus();
+      },
+      fail: function () {
+        console.log('checkDatabase call failed!');
+      }
+    });
+    return false;
+  });
+
+  // Execute SQL / Send SQL to database
+  //
+  setAction("execute-sql", "onclick", function () {
+    var query = document.getElementById('sql-code').value,
+      div = document.getElementById('query-results'),
+      table = sequela.createTable('table-query-results', 'table table-striped table-bordered');
+    sequela.execute(null, query, function (qr) {
+      table.addContent(qr);
+      while (div.hasChildNodes()) {
+          div.removeChild(div.lastChild);
+      }
+      div.appendChild(table.getElement());
+    });
+  });
+
+
+  // Functions
+  //
   function DescriptionList(content) {
     var that = {}, dt, dd,
       dl = document.createElement('dl');
@@ -183,7 +243,7 @@
     };
     return that;
   }
-  
+
   function createNavListLink(o) {
     return Link(o.name, '#', function () {
       var div = document.getElementById('table-info');
@@ -195,44 +255,27 @@
     }).getElement();
   }
 
-  var checkDatabase = function checkDatabase(database) {
-    var dbi = sequela.createDatabaseInfo(database);
-
-    when(dbi.checked, function () {
-      var div = document.getElementById('database-info');
-      while (div.hasChildNodes()) {
-          div.removeChild(div.lastChild);
-      }
-      var entities = {};
-      dbi.entities.forEach(function (o) {
-        if (typeof entities[o.type] === 'undefined') {
-          entities[o.type] = [o];
-        } else {
-          entities[o.type].push(o);
-        }
-      });
-      var navList = new NavList(entities, createNavListLink);
-      div.appendChild(navList.getElement());
-    });
-
-    return false; // don't submit form
+  var checkDatabase = function checkDatabase(o) {
+    var dbi = sequela.createDatabaseInfo(o.database);
+    when(dbi.checked, o.success, o.fail);
+    return dbi;
   }
-  
-  function when(pred, func, counter) {
+
+  function when(pred, success, fail, counter) {
     counter = counter || 0;
     counter += 1;
     window.setTimeout(function () {
       if (pred()) {
-        func();
+        success();
       } else {
         if (counter == 100) {
-          return;
+          fail();
         }
-        when(pred, func, counter);
+        when(pred, success, fail, counter);
       }
     }, 10);
   }
-  
+
   String.prototype.supplant = function (o) {
     return this.replace(/{([^{}]*)}/g,
       function (a, b) {
@@ -248,7 +291,11 @@
     for(i in o) r.push(o[i]);
     return r;
   };
-  
+
+  var identity = function identity(x) {
+      return x;
+  };
+
   // return (function () { alert(this.path.value); return false; }());
   </script>
 </body>

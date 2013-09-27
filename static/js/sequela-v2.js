@@ -63,11 +63,13 @@ var sequela = (function () {
         return that;
     }
 
-    var identity = function identity(x) {
+    function identity(x) {
         return x;
-    }, createQueryResult = function createQueryResult(result) {
+    }
+
+    function createQueryResult(result) {
         return new QueryResult(result);
-    };
+    }
 
     function Sequela(resultWrapper) {
         resultWrapper = resultWrapper || identity;
@@ -144,6 +146,7 @@ var sequela = (function () {
 
 
     return {
+        execute: sequela.execute,
         createSequela: function (qrFactory) {
             return new Sequela(qrFactory);
         },
