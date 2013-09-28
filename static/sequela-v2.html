@@ -216,10 +216,9 @@
       { label: 'Name:', text: tableInfo.name },
       { label: 'Type:', text: tableInfo.type },
       { label: 'SQL:', text: tableInfo.sql , decorate: function (e) {
-        var code = document.createElement('pre');
-        // code.className = 'pre-scrollable';
-        code.appendChild(e)
-        return code;
+        var pre = document.createElement('pre');
+        pre.appendChild(e);
+        return pre;
       }},
     ]).getElement());
     that.getElement = function () {
