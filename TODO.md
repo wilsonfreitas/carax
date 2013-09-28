@@ -12,3 +12,5 @@
 	- huge result set
 - Put COUNT field in **Table info** pane
 - Sequela logo
+- Define **contact**
+- Define **about**
