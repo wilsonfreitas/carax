@@ -66,7 +66,7 @@
             <div class="tab-pane" id="tab1">
               <div class="row-fluid">
                 <!-- <h4>SQL statements:</h4> -->
-                <select class="span12">
+                <select class="span12" id="history">
                 </select>
                 <form name="executeQuery">
                   <input type="hidden" name="database" value="" id="database">
@@ -187,11 +187,16 @@
         div.innerHTML = '<button type="button" class="close" data-dismiss="alert">&times;</button>'
           + "<strong>Error!</strong> "
           + qr.error;
-        replaceWithContent(document.getElementById('message'), div);
+        replaceWithContent('message', div);
       } else if (qr.colnames !== null && qr.rows !== null) {
-        var table = sequela.createTable('table-query-results', 'table table-striped table-bordered');
+        var table = sequela.createTable('table-query-results', 'table table-striped table-bordered'),
+          history = document.getElementById('history'),
+          option = document.createElement('option');
         table.addContent(qr);
         replaceWithContent('query-results', table.getElement());
+        option.innerHTML = qr.query;
+        option.selected = 'selected';
+        history.appendChild(option);
       } else {
         cleanElement('query-results');
       }
@@ -200,6 +205,11 @@
     return false;
   });
 
+  // Define onchange action
+  //
+  setAction('history', 'onchange', function () {
+    document.executeQuery.sqlCode.value += this.options[this.selectedIndex].text;
+  });
 
   // Functions
   //
