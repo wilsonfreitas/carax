@@ -19,6 +19,7 @@
   }
   </style>
   <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -31,7 +32,8 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="brand" href="">Sequela</a>
+        <a class="brand" href="">
+          <span style="font-family: 'Petit Formal Script';">Sequela</span></a>
         <div class="nav-collapse collapse">
           <ul class="nav">
             <li><a href="#about">About</a></li>
@@ -106,23 +108,30 @@
   $(function () {
     $('#myTab li:eq(0) a').tab('show');
   });
+  
+  // function to check if the given parameter is an element or the element's id
+  //
+  function checkElement(elm) {
+    if (typeof elm === 'string') elm = document.getElementById(elm);
+    return elm;
+  }
 
   // function to define the action of an element
   //
   function setAction(elm, action, func) {
-    if (typeof elm === 'string') elm = document.getElementById(elm);
+    elm = checkElement(elm);
     elm[action] = func;
   }
 
   function cleanElement(elm) {
-    if (typeof elm === 'string') elm = document.getElementById(elm);
+    elm = checkElement(elm);
     while (elm.hasChildNodes()) {
         elm.removeChild(elm.lastChild);
     }
   }
 
   function replaceWithContent(elm, content) {
-    if (typeof elm === 'string') elm = document.getElementById(elm);
+    elm = checkElement(elm);
     cleanElement(elm);
     elm.appendChild(content);
   }
