@@ -63,7 +63,9 @@
           <div class="tab-content">
             <div class="tab-pane" id="tab1">
               <div class="row-fluid">
-                <h4>SQL statements:</h4>
+                <!-- <h4>SQL statements:</h4> -->
+                <select class="span12">
+                </select>
                 <form name="executeQuery">
                   <input type="hidden" name="database" value="" id="database">
                   <textarea name="sqlCode" id="sql-code" rows="10" class="span12" placeholder="Enter SQL code here!"></textarea>
@@ -177,10 +179,12 @@
           + "<strong>Error!</strong> "
           + qr.error;
         replaceWithContent(document.getElementById('message'), div);
-      } else {
+      } else if (qr.colnames !== null && qr.rows !== null) {
         var table = sequela.createTable('table-query-results', 'table table-striped table-bordered');
         table.addContent(qr);
         replaceWithContent('query-results', table.getElement());
+      } else {
+        cleanElement('query-results');
       }
     });
     this.sqlCode.focus();

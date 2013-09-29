@@ -47,8 +47,8 @@ def execute(con, query):
 	data["description"] = None
 	data['error'] = None
 	try:
-		data['rows'] = c.execute(query).fetchall()
-		data["description"] = c.description
+		data['rows'] = c.execute(query).fetchall() or None
+		data["description"] = c.description or None
 	except Exception as e:
 		data['error'] = str(e)
 	return json.dumps(data)
