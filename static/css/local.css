@@ -1,0 +1,18 @@
+body {
+/*    font-size: 100%;*/
+/*    padding-top: 60px;*/
+/*    padding-bottom: 40px;*/
+    overflow-y: scroll;
+}
+textarea {
+	font-family: monospace;
+/*    font-size: 150%;*/
+}
+
+#history {
+	font-family: monospace;
+}
+
+#table-query-results {
+    font-size: 75%;
+}

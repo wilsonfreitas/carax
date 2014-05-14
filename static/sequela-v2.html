@@ -1,344 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>sequela-a minimalist SQLite frontend</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <!-- Bootstrap -->
-  <link href="../static/css/bootstrap.css" rel="stylesheet">
-  <style type="text/css">
-  body {
-    padding-top: 60px;
-    padding-bottom: 40px;
-    overflow-y: scroll;
-  }
-  textarea {
-    font-family: monospace;
-    font-size: 150%;
-  }
-  </style>
-  <link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
-  <link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script' rel='stylesheet' type='text/css'>
+	<title>sequela-a minimalist SQLite frontend</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<!-- Bootstrap -->
+	<link href="../static/css/bootstrap.css" rel="stylesheet">
+	<link href="../static/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href='http://fonts.googleapis.com/css?family=Petit+Formal+Script' rel='stylesheet' type='text/css'>
+	<link href="../static/css/local.css" rel="stylesheet">
 </head>
 
 <body>
-	
-  <div class="navbar navbar-inverse navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container-fluid">
-        <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="brand" href="">
-          <span style="font-family: 'Petit Formal Script';">Sequela</span></a>
-        <div class="nav-collapse collapse">
-          <ul class="nav">
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-          <form class="navbar-form pull-right" name="database">
-            <input class="span8" type="text" placeholder="Path to database" id="path" name="database">
-            <button type="submit" class="btn">Connect to database</button>
-          </form>
-        </div><!--/.nav-collapse -->
-      </div>
-    </div>
-  </div>
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="brand" href="">
+				<span style="font-family: 'Petit Formal Script';">Sequela</span></a>
+			<div class="nav-collapse collapse">
+				<ul class="nav">
+					<li><a href="#about">About</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+				<form class="navbar-form pull-right" name="database">
+					<input class="span8" type="text" placeholder="Path to database" id="path" name="database">
+					<button type="submit" class="btn">Connect to database</button>
+				</form>
+			</div><!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid" id="message">
+	</div>
+	<div class="row-fluid">
+		<div class="well span3 sidebar-nav">
+			<h4>Database info</h4>
+			<div id='database-info'></div>
+		</div>
+		<div class="span9">
+			<div class="tabbable"> <!-- Only required for left/right tabs -->
+				<ul class="nav nav-tabs" id="myTab">
+					<li><a href="#tab1" data-toggle="tab">Execute SQL</a></li>
+					<li><a href="#tab2" data-toggle="tab">Table info</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane" id="tab1">
+						<div class="row-fluid">
+							<!-- <h4>SQL statements:</h4> -->
+							<select class="span12" id="history">
+							</select>
+							<form name="executeQuery">
+								<input type="hidden" name="database" value="" id="database">
+								<textarea name="sqlCode" id="sql-code" rows="10" class="span12" placeholder="Enter SQL code here!"></textarea>
+								<button type="submit" class="btn btn-block btn-large btn-primary" id="execute-sql">
+									Execute SQL</button>
+							</form>
+						</div>
+						<div class="row-fluid">
+							<h4>Results:</h4>
+							<div class="well" id="query-results">
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane" id="tab2">
+						<div class="row-fluid" id='table-info'>
+							<!-- table-info: information about table structure -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr>
+</div> <!-- /container -->
 
-  <div class="container-fluid">
-    <div class="row-fluid" id="message">
-    </div>
-    <div class="row-fluid">
-      <div class="well span3 sidebar-nav">
-        <h4>Database info</h4>
-        <div id='database-info'></div>
-      </div>
-      <div class="span9">
-        <div class="tabbable"> <!-- Only required for left/right tabs -->
-          <ul class="nav nav-tabs" id="myTab">
-            <li><a href="#tab1" data-toggle="tab">Execute SQL</a></li>
-            <li><a href="#tab2" data-toggle="tab">Table info</a></li>
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane" id="tab1">
-              <div class="row-fluid">
-                <!-- <h4>SQL statements:</h4> -->
-                <select class="span12" id="history">
-                </select>
-                <form name="executeQuery">
-                  <input type="hidden" name="database" value="" id="database">
-                  <textarea name="sqlCode" id="sql-code" rows="10" class="span12" placeholder="Enter SQL code here!"></textarea>
-                  <button type="submit" class="btn btn-block btn-large btn-primary" id="execute-sql">
-                    Execute SQL</button>
-                </form>
-              </div>
-              <div class="row-fluid">
-                <h4>Results:</h4>
-                <div class="well" id="query-results">
-                </div>
-              </div>
-            </div>
-            <div class="tab-pane" id="tab2">
-              <div class="row-fluid" id='table-info'>
-                <!-- table-info: information about table structure -->
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-    <hr>
-    <!-- <footer>
-      <p>Sequela is a free software brought by Wilson Freitas
-        <br>&copy; Wilson Freitas 2013</p>
-    </footer> -->
-  </div> <!-- /container -->
-
-  <script src="http://code.jquery.com/jquery.js"></script>
-  <script src="../static/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../static/js/marajax.js"></script>
-  <script type="text/javascript" src="../static/js/sequela-v2.js"></script>
-  <script type="text/javascript" charset="utf-8">
-  // The following statement sets the first tab to appear.
-  // 
-  $(function () {
-    $('#myTab li:eq(0) a').tab('show');
-  });
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../static/js/marajax.js"></script>
+<script type="text/javascript" src="../static/js/sequela-v2.js"></script>
+<script type="text/javascript" charset="utf-8">
+// The following statement sets the first tab to appear.
+// 
+$(function () {
+	$('#myTab li:eq(0) a').tab('show');
+});
   
-  // function to check if the given parameter is an element or the element's id
-  //
-  function checkElement(elm) {
-    if (typeof elm === 'string') elm = document.getElementById(elm);
-    return elm;
-  }
+// function to check if the given parameter is an element or the element's id
+//
+function checkElement(elm) {
+	if (typeof elm === 'string') elm = document.getElementById(elm);
+	return elm;
+}
 
-  // function to define the action of an element
-  //
-  function setAction(elm, action, func) {
-    elm = checkElement(elm);
-    elm[action] = func;
-  }
+// function to define the action of an element
+//
+function setAction(elm, action, func) {
+	elm = checkElement(elm);
+	elm[action] = func;
+}
 
-  function cleanElement(elm) {
-    elm = checkElement(elm);
-    while (elm.hasChildNodes()) {
-        elm.removeChild(elm.lastChild);
-    }
-  }
+function cleanElement(elm) {
+	elm = checkElement(elm);
+	while (elm.hasChildNodes()) {
+		elm.removeChild(elm.lastChild);
+	}
+}
 
-  function replaceWithContent(elm, content) {
-    elm = checkElement(elm);
-    cleanElement(elm);
-    elm.appendChild(content);
-  }
+function replaceWithContent(elm, content) {
+	elm = checkElement(elm);
+	cleanElement(elm);
+	elm.appendChild(content);
+}
 
-  // Start by focusing the form where the database's path is defined.
-  // 
-  setAction(window, 'onload', function () {
-    document.getElementById('path').focus();
-  });
+// Start by focusing the form where the database's path is defined.
+// 
+setAction(window, 'onload', function () {
+	document.getElementById('path').focus();
+});
 
-  // Define onsubmit the database call
-  // 
-  setAction(document.database, "onsubmit", function () {
-    var pathElement = this.path, dbi = checkDatabase({
-      database: this.path.value,
-      success: function () {
-        var entities = {};
-        dbi.entities.forEach(function (o) {
-          if (typeof entities[o.type] === 'undefined') {
-            entities[o.type] = [o];
-          } else {
-            entities[o.type].push(o);
-          }
-        });
-        cleanElement(document.getElementById('message'));
-        var navList = new NavList(entities, createNavListLink);
-        replaceWithContent('database-info', navList.getElement());
-        document.executeQuery.database.value = dbi.database;
-        document.executeQuery.sqlCode.focus();
-      },
-      fail: function () {
-        var div = document.createElement('div');
-        div.className = "alert alert-error";
-        div.innerHTML = '<button type="button" class="close" data-dismiss="alert">&times;</button>'
-          + "<strong>Error!</strong> The given path is invalid: "
-          + dbi.database;
-        replaceWithContent(document.getElementById('message'), div);
-        pathElement.focus();
-      }
-    });
-    return false;
-  });
+// Define onsubmit the database call
+// 
+setAction(document.database, "onsubmit", function () {
+	var pathElement = this.path, dbi = checkDatabase({
+		database: this.path.value,
+		success: function () {
+			var entities = {};
+			dbi.entities.forEach(function (o) {
+				if (typeof entities[o.type] === 'undefined') {
+					entities[o.type] = [o];
+				} else {
+					entities[o.type].push(o);
+				}
+			});
+			cleanElement(document.getElementById('message'));
+			var navList = new NavList(entities, createNavListLink);
+			replaceWithContent('database-info', navList.getElement());
+			document.executeQuery.database.value = dbi.database;
+			document.executeQuery.sqlCode.focus();
+		},
+		fail: function () {
+			var div = document.createElement('div');
+			div.className = "alert alert-error";
+			div.innerHTML = '<button type="button" class="close" data-dismiss="alert">&times;</button>'
+			+ "<strong>Error!</strong> The given path is invalid: "
+			+ dbi.database;
+			replaceWithContent(document.getElementById('message'), div);
+			pathElement.focus();
+		}
+	});
+	return false;
+});
 
-  // Execute SQL / Send SQL to database
-  //
-  setAction(document.executeQuery, "onsubmit", function () {
-    var query = this.sqlCode.value,
-      database = this.database.value;
-    sequela.execute(database, query, function (qr) {
-      if (qr.error) {
-        var div = document.createElement('div');
-        div.className = "alert alert-error";
-        div.innerHTML = '<button type="button" class="close" data-dismiss="alert">&times;</button>'
-          + "<strong>Error!</strong> "
-          + qr.error;
-        replaceWithContent('message', div);
-      } else if (qr.colnames !== null && qr.rows !== null) {
-        var table = sequela.createTable('table-query-results', 'table table-striped table-bordered'),
-          history = document.getElementById('history'),
-          option = document.createElement('option');
-        table.addContent(qr);
-        replaceWithContent('query-results', table.getElement());
-        option.innerHTML = qr.query;
-        option.selected = 'selected';
-        history.appendChild(option);
-      } else {
-        cleanElement('query-results');
-      }
-    });
-    this.sqlCode.focus();
-    return false;
-  });
+// Execute SQL / Send SQL to database
+//
+setAction(document.executeQuery, "onsubmit", function () {
+	var query = this.sqlCode.value,
+	database = this.database.value;
+	sequela.execute(database, query, function (qr) {
+		if (qr.error) {
+			var div = document.createElement('div');
+			div.className = "alert alert-error";
+			div.innerHTML = '<button type="button" class="close" data-dismiss="alert">&times;</button>'
+			+ "<strong>Error!</strong> "
+			+ qr.error;
+			replaceWithContent('message', div);
+		} else if (qr.colnames !== null && qr.rows !== null) {
+			var table = sequela.createTable('table-query-results', 'table table-striped table-bordered'),
+			history = document.getElementById('history'),
+			option = document.createElement('option');
+			table.addContent(qr);
+			replaceWithContent('query-results', table.getElement());
+			option.innerHTML = qr.query;
+			option.selected = 'selected';
+			history.appendChild(option);
+		} else {
+			cleanElement('query-results');
+		}
+	});
+	this.sqlCode.focus();
+	return false;
+});
 
-  // Define onchange action
-  //
-  setAction('history', 'onchange', function () {
-    document.executeQuery.sqlCode.value += this.options[this.selectedIndex].text;
-  });
+// Define onchange action
+//
+setAction('history', 'onchange', function () {
+	document.executeQuery.sqlCode.value += this.options[this.selectedIndex].text;
+});
 
-  // Functions
-  //
-  function DescriptionList(content) {
-    var that = {}, dt, dd,
-      dl = document.createElement('dl');
+// Functions
+//
+function DescriptionList(content) {
+	var that = {}, dt, dd,
+	dl = document.createElement('dl');
 
-    content.forEach(function (o) {
-      var dt = document.createElement('dt'), dd = document.createElement('dd');
-      decorate = o.decorate || identity;
-      dt.appendChild(document.createTextNode(o.label));
-      dd.appendChild(decorate(document.createTextNode(o.text)));
-      dl.appendChild(dt);
-      dl.appendChild(dd);
-    });
+	content.forEach(function (o) {
+		var dt = document.createElement('dt'), dd = document.createElement('dd');
+		decorate = o.decorate || identity;
+		dt.appendChild(document.createTextNode(o.label));
+		dd.appendChild(decorate(document.createTextNode(o.text)));
+		dl.appendChild(dt);
+		dl.appendChild(dd);
+	});
 
-    that.getElement = function () {
-      return dl;
-    };
-    return that;
-  }
+	that.getElement = function () {
+		return dl;
+	};
+	return that;
+}
 
-  function TableInfoDiv(tableInfo) {
-    var that = {}, div = document.createElement('div');
-    div.className = 'well';
-    div.appendChild(DescriptionList([
-      { label: 'Name:', text: tableInfo.name },
-      { label: 'Type:', text: tableInfo.type },
-      { label: 'SQL:', text: tableInfo.sql , decorate: function (e) {
-        var pre = document.createElement('pre');
-        pre.appendChild(e);
-        return pre;
-      }},
-    ]).getElement());
-    that.getElement = function () {
-      return div;
-    }
-    return that;
-  }
+function TableInfoDiv(tableInfo) {
+	var that = {}, div = document.createElement('div');
+	div.className = 'well';
+	div.appendChild(DescriptionList([
+		{ label: 'Name:', text: tableInfo.name },
+		{ label: 'Type:', text: tableInfo.type },
+		{ label: 'SQL:', text: tableInfo.sql , decorate: function (e) {
+			var pre = document.createElement('pre');
+			pre.appendChild(e);
+			return pre;
+		}},
+		]).getElement());
+		that.getElement = function () {
+			return div;
+		}
+		return that;
+	}
 
-  function NavList(entities, createLink) {
-    var that = {}, i, j, inEl,
-      list = document.createElement('ul');
-    createLink = createLink || function (x) {
-      return document.createTextNode(x);
-    };
-    list.className = 'nav nav-list';
+	function NavList(entities, createLink) {
+		var that = {}, i, j, inEl,
+		list = document.createElement('ul');
+		createLink = createLink || function (x) {
+			return document.createTextNode(x);
+		};
+		list.className = 'nav nav-list';
 
-    for (i in entities) {
-      inEl = document.createElement('li');
-      inEl.className = 'nav-header';
-      inEl.innerHTML = i;
-      list.appendChild(inEl);
-      entities[i].forEach(function (o) {
-        inEl = document.createElement('li');
-        inEl.appendChild(createLink(o));
-        list.appendChild(inEl);
-      });
-    }
+		for (i in entities) {
+			inEl = document.createElement('li');
+			inEl.className = 'nav-header';
+			inEl.innerHTML = i;
+			list.appendChild(inEl);
+			entities[i].forEach(function (o) {
+				inEl = document.createElement('li');
+				inEl.appendChild(createLink(o));
+				list.appendChild(inEl);
+			});
+		}
 
-    that.getElement = function () {
-      return list;
-    };
+		that.getElement = function () {
+			return list;
+		};
 
-    return that;
-  }
+		return that;
+	}
 
-  function Link(text, href, onclick) {
-    var that = {},
-      a = document.createElement('a');
-    a.href = href;
-    a.onclick = onclick;
-    a.title = text;
-    a.appendChild(document.createTextNode(text));
-    that.getElement = function () {
-      return a;
-    };
-    return that;
-  }
+	function Link(text, href, onclick) {
+		var that = {},
+		a = document.createElement('a');
+		a.href = href;
+		a.onclick = onclick;
+		a.title = text;
+		a.appendChild(document.createTextNode(text));
+		that.getElement = function () {
+			return a;
+		};
+		return that;
+	}
 
-  function createNavListLink(o) {
-    return Link(o.name, '#', function () {
-      replaceWithContent('table-info', TableInfoDiv(o).getElement());
-      $('#myTab li:eq(1) a').tab('show');
-    }).getElement();
-  }
+	function createNavListLink(o) {
+		return Link(o.name, '#', function () {
+			replaceWithContent('table-info', TableInfoDiv(o).getElement());
+			$('#myTab li:eq(1) a').tab('show');
+		}).getElement();
+	}
 
-  var checkDatabase = function checkDatabase(o) {
-    var dbi = sequela.createDatabaseInfo(o.database);
-    when(dbi.checked, o.success, o.fail);
-    return dbi;
-  }
+	var checkDatabase = function checkDatabase(o) {
+		var dbi = sequela.createDatabaseInfo(o.database);
+		when(dbi.checked, o.success, o.fail);
+		return dbi;
+	}
 
-  function when(pred, success, fail, counter) {
-    counter = counter || 0;
-    counter += 1;
-    window.setTimeout(function () {
-      if (pred()) {
-        success();
-      } else {
-        if (counter == 100) {
-          fail();
-        }
-        when(pred, success, fail, counter);
-      }
-    }, 10);
-  }
+	function when(pred, success, fail, counter) {
+		counter = counter || 0;
+		counter += 1;
+		window.setTimeout(function () {
+			if (pred()) {
+				success();
+			} else {
+				if (counter == 100) {
+					fail();
+				}
+				when(pred, success, fail, counter);
+			}
+		}, 10);
+	}
 
-  String.prototype.supplant = function (o) {
-    return this.replace(/{([^{}]*)}/g,
-      function (a, b) {
-        var r = o[b];
-        return typeof r === 'string' || typeof r === 'number' ? r : a;
-      }
-    );
-  }
+	String.prototype.supplant = function (o) {
+		return this.replace(/{([^{}]*)}/g,
+		function (a, b) {
+			var r = o[b];
+			return typeof r === 'string' || typeof r === 'number' ? r : a;
+		}
+	);
+}
 
-  Array.prototype.unique = function() {
-    var o = {}, i, l = this.length, r = [];
-    for(i=0; i<l;i+=1) o[this[i]] = this[i];
-    for(i in o) r.push(o[i]);
-    return r;
-  };
+Array.prototype.unique = function() {
+	var o = {}, i, l = this.length, r = [];
+	for(i=0; i<l;i+=1) o[this[i]] = this[i];
+	for(i in o) r.push(o[i]);
+	return r;
+};
 
-  var identity = function identity(x) {
-      return x;
-  };
+var identity = function identity(x) {
+	return x;
+};
 
-  // return (function () { alert(this.path.value); return false; }());
-  </script>
+// return (function () { alert(this.path.value); return false; }());
+</script>
 </body>
 </html>
